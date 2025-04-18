@@ -225,7 +225,7 @@
                                         title="Thêm vào giỏ hàng">
                                     <i class="bi bi-cart-plus"></i>
                                 </button>
-                                <button class="btn btn-sm btn-dark rounded-circle p-2 add-to-wishlist"
+                                <button class="btn btn-sm btn-outline-dark rounded-circle p-2 add-to-wishlist"
                                         data-product-id="{{ $product->id }}"
                                         title="Thêm vào yêu thích">
                                     <i class="bi bi-heart"></i>
@@ -325,170 +325,12 @@
     </div>
 </section>
 
-<style>
-    .product-card {
-        transition: all 0.3s ease;
-    }
-    
-    .product-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-    }
-    
-    .product-overlay {
-        background: rgba(255,255,255,0.9);
-        transition: all 0.3s ease;
-    }
-    
-    .product-card:hover .product-overlay {
-        opacity: 1 !important;
-    }
-    
-    .object-fit-cover {
-        object-fit: cover;
-    }
-    
-    .btn-outline-dark:hover {
-        color: white;
-    }
-
-    .categories-slider {
-        padding: 1rem 0;
-        margin: 0 20px;
-    }
-    .categories-slider .swiper-slide {
-        width: 280px;
-        margin-right: 20px;
-    }
-    .card {
-        transition: transform 0.3s ease;
-    }
-    .card:hover {
-        transform: translateY(-5px);
-    }
-
-    .category-prev,
-    .category-next {
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .category-prev:hover,
-    .category-next:hover {
-        background-color: #fff;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-        transform: translateY(-50%) scale(1.1);
-    }
-</style>
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/styleHeart.css') }}">
+@endpush
 
 @push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Add to cart functionality
-    const addToCartButtons = document.querySelectorAll('.add-to-cart');
-    addToCartButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            const productId = this.dataset.productId;
-            addToCart(productId);
-        });
-    });
-
-    // Add to wishlist functionality
-    const addToWishlistButtons = document.querySelectorAll('.add-to-wishlist');
-    addToWishlistButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            const productId = this.dataset.productId;
-            addToWishlist(productId);
-        });
-    });
-
-    new Swiper('.categories-slider', {
-        slidesPerView: 'auto',
-        spaceBetween: 20,
-        navigation: {
-            nextEl: '.category-next',
-            prevEl: '.category-prev',
-        },
-        breakpoints: {
-            640: {
-                slidesPerView: 2,
-            },
-            768: {
-                slidesPerView: 3,
-            },
-            1024: {
-                slidesPerView: 4,
-            },
-        }
-    });
-});
-
-function addToCart(productId) {
-    fetch(`/cart/add/${productId}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Đã thêm sản phẩm vào giỏ hàng!');
-            // Có thể cập nhật số lượng trong giỏ hàng ở header
-            updateCartCount(data.cartCount);
-        } else {
-            alert('Có lỗi xảy ra. Vui lòng thử lại!');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Có lỗi xảy ra. Vui lòng thử lại!');
-    });
-}
-
-function addToWishlist(productId) {
-    fetch(`/wishlist/add/${productId}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Đã thêm sản phẩm vào danh sách yêu thích!');
-            // Có thể cập nhật số lượng trong wishlist ở header
-            updateWishlistCount(data.wishlistCount);
-        } else {
-            alert('Có lỗi xảy ra. Vui lòng thử lại!');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Có lỗi xảy ra. Vui lòng thử lại!');
-    });
-}
-
-// Hàm cập nhật số lượng trong giỏ hàng
-function updateCartCount(count) {
-    const cartCountElement = document.querySelector('.cart-count');
-    if (cartCountElement) {
-        cartCountElement.textContent = count;
-    }
-}
-
-// Hàm cập nhật số lượng trong wishlist
-function updateWishlistCount(count) {
-    const wishlistCountElement = document.querySelector('.wishlist-count');
-    if (wishlistCountElement) {
-        wishlistCountElement.textContent = count;
-    }
-}
-</script>
+<script src="{{ asset('js/cart.js') }}"></script>
+<script src="{{ asset('js/wishlisthome.js') }}"></script>
 @endpush
 @endsection 

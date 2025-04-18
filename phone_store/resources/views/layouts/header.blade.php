@@ -53,7 +53,7 @@
                     </div>
                 @endguest
 
-                <a href="{{ route('wishlist') }}" class="text-dark text-decoration-none position-relative">
+                <a href="{{ route('wishlist.index') }}" class="text-dark text-decoration-none position-relative">
                     <i class="bi bi-heart"></i>
                     <span class="ms-2 d-none d-lg-inline">Yêu thích</span>
                     @auth
@@ -63,20 +63,49 @@
                     @endauth
                 </a>
 
-                <a href="{{ route('cart') }}" class="text-dark text-decoration-none position-relative">
+                <a href="{{ route('cart.index') }}" class="text-dark text-decoration-none position-relative">
                     <i class="bi bi-cart3"></i>
                     <span class="ms-2 d-none d-lg-inline">Giỏ hàng</span>
                     @auth
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                            {{ Auth::user()->cart?->items_count ?? 0 }}
+                            {{ Auth::user()->cart?->cartItems->sum('quantity') ?? 0 }}
                         </span>
                     @endauth
                 </a>
 
-                <button class="btn btn-link text-dark p-0 d-none d-lg-block">
+                <button class="btn btn-link text-dark p-0 d-none d-lg-block" type="button" data-bs-toggle="modal" data-bs-target="#searchModal">
                     <i class="bi bi-search"></i>
                 </button>
             </div>
         </div>
     </nav>
-</header> 
+</header>
+
+<!-- Search Modal -->
+<div class="modal search-modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-slideout">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" id="searchModalLabel">Tìm kiếm sản phẩm</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ route('search') }}" method="GET" class="search-form">
+                    <div class="input-group">
+                        <input type="text" 
+                               class="form-control" 
+                               name="q" 
+                               placeholder="Nhập tên sản phẩm cần tìm..."
+                               required
+                               minlength="2">
+                        <button class="btn btn-dark" type="submit">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="{{ assert('css/styleHeart.css')}}">

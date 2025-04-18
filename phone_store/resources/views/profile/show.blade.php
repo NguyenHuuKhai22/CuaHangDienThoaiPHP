@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Hồ sơ của tôi - KAIRA')
+@section('title', 'Hồ sơ của tôi - HK')
 
 @section('content')
 <div class="container py-5">
@@ -23,7 +23,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('orders') }}">
+                            <a class="nav-link" href="#">
                                 <i class="bi bi-bag me-2"></i> Đơn hàng của tôi
                             </a>
                         </li>

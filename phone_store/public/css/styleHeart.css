@@ -1,0 +1,118 @@
+
+    .product-card {
+        transition: all 0.3s ease;
+    }
+    
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    
+    .product-overlay {
+        background: rgba(255,255,255,0.9);
+        transition: all 0.3s ease;
+    }
+    
+    .product-card:hover .product-overlay {
+        opacity: 1 !important;
+    }
+    
+    .object-fit-cover {
+        object-fit: cover;
+    }
+    
+    .btn-outline-dark:hover {
+        color: white;
+    }
+
+    .categories-slider {
+        padding: 1rem 0;
+        margin: 0 20px;
+    }
+    .categories-slider .swiper-slide {
+        width: 280px;
+        margin-right: 20px;
+    }
+    .card {
+        transition: transform 0.3s ease;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .category-prev,
+    .category-next {
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .category-prev:hover,
+    .category-next:hover {
+        background-color: #fff;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        transform: translateY(-50%) scale(1.1);
+    }
+
+    /* Cập nhật style cho nút wishlist */
+    .add-to-wishlist {
+        transition: all 0.3s ease;
+        background-color: #212529 !important;
+        border-color: #212529 !important;
+    }
+
+    .add-to-wishlist i {
+        color: white !important;
+    }
+
+    .add-to-wishlist.active {
+        background-color: #dc3545 !important;
+        border-color: #dc3545 !important;
+    }
+
+    .add-to-wishlist:not(.active):hover {
+        background-color: #dc3545 !important;
+        border-color: #dc3545 !important;
+    }
+
+    /* tim kiem */
+    .modal.search-modal .modal-dialog-slideout {
+        margin: 0 0 0 auto;
+        height: 100%;
+    }
+    
+    .modal.search-modal .modal-content {
+        height: 100%;
+        overflow-y: auto;
+        border-radius: 0;
+    }
+    
+    .modal.search-modal .modal-dialog {
+        width: 380px;
+        max-width: 95%;
+        transform: translate(100%, 0);
+        transition: transform .3s ease-out;
+    }
+    
+    .modal.search-modal.show .modal-dialog {
+        transform: translate(0, 0);
+    }
+    
+    .modal.search-modal .modal-header {
+        padding: 1.5rem;
+    }
+    
+    .modal.search-modal .modal-body {
+        padding: 1.5rem;
+    }
+    
+    .modal.search-modal .search-form input {
+        border-radius: 0;
+        border: 1px solid #ddd;
+        padding: 0.75rem 1rem;
+    }
+    
+    .modal.search-modal .search-form .btn {
+        border-radius: 0;
+        padding: 0.75rem 1.5rem;
+    }

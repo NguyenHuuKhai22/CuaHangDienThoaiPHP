@@ -8,6 +8,11 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\ShopController;
+use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\SearchController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -38,18 +43,23 @@ Route::middleware('guest')->group(function () {
 // Authenticated user routes
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-   
-    Route::get('/orders', [OrderController::class, 'index'])->name('orders');
     
-    // Cart routes
-    Route::get('/cart', [CartController::class, 'index'])->name('cart');
+    // Cart Routes
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/cart/add/{product}', [CartController::class, 'add'])->name('cart.add');
-    Route::delete('/cart/remove/{product}', [CartController::class, 'remove'])->name('cart.remove');
+    Route::put('/cart/items/{item}', [CartController::class, 'update'])->name('cart.update');
+    Route::delete('/cart/items/{item}', [CartController::class, 'remove'])->name('cart.remove');
+    Route::delete('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
+    
+    //  Commented out until controllers are created
+    // Route::get('/orders', [OrderController::class, 'index'])->name('orders');
     
     // Wishlist routes
-    Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist');
+    Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
     Route::post('/wishlist/add/{product}', [WishlistController::class, 'add'])->name('wishlist.add');
     Route::delete('/wishlist/remove/{product}', [WishlistController::class, 'remove'])->name('wishlist.remove');
+    Route::get('/wishlist/check/{product}', [WishlistController::class, 'checkStatus'])->name('wishlist.check');
+    
 });
 
 // Products routes
@@ -59,9 +69,7 @@ Route::get('/products', function () {
 
 Route::get('/products/{product}', [App\Http\Controllers\ProductController::class, 'show'])->name('products.show');
 Route::get('/products/{product}/details', [App\Http\Controllers\ProductController::class, 'getDetails'])->name('products.details');
-
-Route::get('/products/{product}/quick-view', [App\Http\Controllers\ProductController::class, 'quickView'])->name('products.quick-view'); 
-
+Route::get('/products/{product}/quick-view', [App\Http\Controllers\ProductController::class, 'quickView'])->name('products.quick-view');
 
 // Profile routes
 Route::middleware('auth')->group(function () {
@@ -71,3 +79,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/categories/{category}', [CategoryController::class, 'show'])->name('categories.show');
+Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
+
+// Search routes
+Route::get('/search', [SearchController::class, 'search'])->name('search');
