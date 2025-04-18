@@ -30,10 +30,29 @@
                                 <div>
                                     <h5 class="mb-1">{{ $item->product->name }}</h5>
                                     <p class="text-muted mb-0">{{ $item->product->category->name }}</p>
+                                    @if($item->product->discount_price)
+                                        <div class="mt-1">
+                                            <span class="text-decoration-line-through text-muted">{{ number_format($item->product->price) }}đ</span>
+                                            <span class="text-danger ms-2">{{ number_format($item->product->discount_price) }}đ</span>
+                                            <span class="badge bg-danger ms-2">
+                                                -{{ round((($item->product->price - $item->product->discount_price) / $item->product->price) * 100) }}%
+                                            </span>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </td>
-                        <td>{{ number_format($item->price) }}đ</td>
+                        <td>
+                            @if($item->product->discount_price)
+                                <div>
+                                    <span class="text-decoration-line-through text-muted">{{ number_format($item->product->price) }}đ</span>
+                                    <br>
+                                    <span class="text-danger">{{ number_format($item->product->discount_price) }}đ</span>
+                                </div>
+                            @else
+                                {{ number_format($item->price) }}đ
+                            @endif
+                        </td>
                         <td>
                             <div class="input-group" style="width: 120px;">
                                 <button class="btn btn-outline-secondary btn-sm quantity-btn" 
@@ -49,7 +68,17 @@
                                         data-item-id="{{ $item->id }}">+</button>
                             </div>
                         </td>
-                        <td>{{ number_format($item->price * $item->quantity) }}đ</td>
+                        <td>
+                            @if($item->product->discount_price)
+                                <div>
+                                    <span class="text-decoration-line-through text-muted">{{ number_format($item->product->price * $item->quantity) }}đ</span>
+                                    <br>
+                                    <span class="text-danger">{{ number_format($item->product->discount_price * $item->quantity) }}đ</span>
+                                </div>
+                            @else
+                                {{ number_format($item->price * $item->quantity) }}đ
+                            @endif
+                        </td>
                         <td>
                             <button class="btn btn-danger btn-sm remove-item" 
                                     data-item-id="{{ $item->id }}">
@@ -62,7 +91,28 @@
                 <tfoot>
                     <tr>
                         <td colspan="3" class="text-end"><strong>Tổng cộng:</strong></td>
-                        <td><strong>{{ number_format($cart->total_amount) }}đ</strong></td>
+                        <td>
+                            @php
+                                $totalOriginal = $cart->cartItems->sum(function($item) {
+                                    return $item->product->price * $item->quantity;
+                                });
+                                $totalDiscounted = $cart->cartItems->sum(function($item) {
+                                    return ($item->product->discount_price ?: $item->product->price) * $item->quantity;
+                                });
+                            @endphp
+                            @if($totalOriginal > $totalDiscounted)
+                                <div>
+                                    <span class="text-decoration-line-through text-muted">{{ number_format($totalOriginal) }}đ</span>
+                                    <br>
+                                    <strong class="text-danger">{{ number_format($totalDiscounted) }}đ</strong>
+                                    <span class="badge bg-danger ms-2">
+                                        -{{ round((($totalOriginal - $totalDiscounted) / $totalOriginal) * 100) }}%
+                                    </span>
+                                </div>
+                            @else
+                                <strong>{{ number_format($totalDiscounted) }}đ</strong>
+                            @endif
+                        </td>
                         <td></td>
                     </tr>
                 </tfoot>
@@ -73,7 +123,7 @@
             <button class="btn btn-outline-danger" id="clear-cart">
                 <i class="bi bi-trash me-2"></i>Xóa giỏ hàng
             </button>
-            <a href="#" class="btn btn-primary">
+            <a href="{{ route('payment.checkout') }}" class="btn btn-primary">
                 Thanh toán
                 <i class="bi bi-arrow-right ms-2"></i>
             </a>

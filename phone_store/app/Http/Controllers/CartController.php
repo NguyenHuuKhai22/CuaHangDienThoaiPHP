@@ -40,12 +40,12 @@ class CartController extends Controller
                 'cart_id' => $cart->id,
                 'product_id' => $product->id,
                 'quantity' => $request->quantity,
-                'price' => $product->price
+                'price' => $product->discount_price ?? $product->price
             ]);
         }
-        //
+
         $cart->total_amount = $cart->cartItems->sum(function($item) {
-            return $item->quantity * $item->price;
+            return $item->quantity * ($item->product->discount_price ?? $item->price);
         });
         $cart->save();
 
@@ -67,7 +67,7 @@ class CartController extends Controller
 
         $cart = $item->cart;
         $cart->total_amount = $cart->cartItems->sum(function($item) {
-            return $item->quantity * $item->price;
+            return $item->quantity * ($item->product->discount_price ?? $item->price);
         });
         $cart->save();
 
@@ -84,7 +84,7 @@ class CartController extends Controller
         $item->delete();
 
         $cart->total_amount = $cart->cartItems->sum(function($item) {
-            return $item->quantity * $item->price;
+            return $item->quantity * ($item->product->discount_price ?? $item->price);
         });
         $cart->save();
 
