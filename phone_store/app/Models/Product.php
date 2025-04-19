@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
-    use HasFactory;
+    use HasFactory,SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -25,7 +26,8 @@ class Product extends Model
         'battery_capacity',
         'operating_system',
         'is_featured',
-        'status'
+        'status',
+        'deleted_at'
     ];
 
     protected $casts = [
@@ -63,5 +65,39 @@ class Product extends Model
     public function getFormattedDiscountPriceAttribute()
     {
         return $this->discount_price ? number_format($this->discount_price, 0, ',', '.') . ' ₫' : null;
+    }
+
+    /**
+     * Quan hệ với Promotion
+     */
+    public function promotions()
+    {
+        return $this->belongsToMany(Promotion::class, 'product_promotion')
+                    ->withTimestamps();
+    }
+
+    /**
+     * Lấy khuyến mãi đang áp dụng
+     */
+    public function getActivePromotion()
+    {
+        return $this->promotions()
+                    ->where('is_active', true)
+                    ->where('start_date', '<=', now())
+                    ->where('end_date', '>=', now())
+                    ->orderBy('discount_value', 'desc')
+                    ->first();
+    }
+
+    /**
+     * Lấy giá sau khuyến mãi
+     */
+    public function getDiscountedPrice()
+    {
+        $promotion = $this->getActivePromotion();
+        if (!$promotion) {
+            return $this->price;
+        }
+        return $promotion->calculateDiscountPrice($this->price);
     }
 } 

@@ -1,4 +1,22 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Cấu hình Toastr
+    toastr.options = {
+        "closeButton": true,
+        "debug": false,
+        "newestOnTop": false,
+        "progressBar": true,
+        "positionClass": "toast-bottom-right",
+        "preventDuplicates": false,
+        "onclick": null,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "5000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    };
     // Xử lý nút thêm vào danh sách yêu thích
     document.querySelectorAll('.add-to-wishlist').forEach(button => {
         button.addEventListener('click', function() {
@@ -43,10 +61,13 @@ function updateWishlistButton(isInWishlist) {
     const text = button.querySelector('.wishlist-text');
 
     if (isInWishlist) {
+       
+        button.classList.add('active');
         icon.classList.remove('bi-heart');
         icon.classList.add('bi-heart-fill', 'text-danger');
         text.textContent = 'Xóa khỏi yêu thích';
     } else {
+        button.classList.remove('active');
         icon.classList.remove('bi-heart-fill', 'text-danger');
         icon.classList.add('bi-heart');
         text.textContent = 'Thêm vào yêu thích';
@@ -105,9 +126,9 @@ function addToWishlist(productId) {
             });
         }
 
-            alert(isInWishlist ? 'Sản phẩm đã được xóa khỏi danh sách yêu thích' : 'Sản phẩm đã được thêm vào danh sách yêu thích');
+            toastr.success(isInWishlist ? 'Sản phẩm đã được xóa khỏi danh sách yêu thích' : 'Sản phẩm đã được thêm vào danh sách yêu thích');
         } else {
-            alert(data.message || 'Có lỗi xảy ra');
+            toastr.error(data.message || 'Có lỗi xảy ra');
         }
     })
     .catch(error => {
@@ -115,7 +136,7 @@ function addToWishlist(productId) {
         if (error === 'Unauthorized') {
             return;
         }
-        alert('Có lỗi xảy ra khi thêm vào danh sách yêu thích. Vui lòng thử lại sau.');
+        toastr.error('Có lỗi xảy ra khi thêm vào danh sách yêu thích. Vui lòng thử lại sau.');
     });
     
 }
@@ -156,12 +177,12 @@ function removeFromWishlist(productId) {
                     location.reload(); // Tải lại trang để hiển thị thông báo danh sách trống
                 }
             } else {
-                alert(data.message || 'Có lỗi xảy ra khi xóa khỏi danh sách yêu thích');
+                toastr.error(data.message || 'Có lỗi xảy ra khi xóa khỏi danh sách yêu thích');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Có lỗi xảy ra khi xóa khỏi danh sách yêu thích');
+            toastr.error('Có lỗi xảy ra khi xóa khỏi danh sách yêu thích');
         });
     }
 } 

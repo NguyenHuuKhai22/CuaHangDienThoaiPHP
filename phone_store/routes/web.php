@@ -14,7 +14,14 @@ use App\Http\Controllers\ShopController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\PaymentController;
-
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\CategoryAdminController;
+use App\Http\Controllers\Admin\OrderAdminController;
+use App\Http\Controllers\Admin\PromotionController;
+use App\Http\Controllers\PromotionNotificationController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -32,6 +39,7 @@ Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 
 // Authentication routes
 Route::middleware('guest')->group(function () {
+    
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login']);
     Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
@@ -82,6 +90,7 @@ Route::get('/products/{product}/quick-view', [App\Http\Controllers\ProductContro
 
 // Profile routes
 Route::middleware('auth')->group(function () {
+
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
@@ -95,3 +104,52 @@ Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
 
 // Search routes
 Route::get('/search', [SearchController::class, 'search'])->name('search');
+
+// Admin routes
+Route::prefix('admin')->name('admin.')->group(function () {
+    // Public routes
+    Route::middleware('guest')->group(function () {
+        Route::get('login', [AdminController::class, 'showLoginForm'])->name('login');
+        Route::post('login', [AdminController::class, 'login'])->name('login.submit');
+    });
+
+    // Protected routes
+    Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->group(function () {
+        Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
+        Route::post('logout', [AdminController::class, 'logout'])->name('logout');
+        //user routes
+        Route::resource('users', UserController::class)->except(['show']);
+        Route::put('users/{user}/block', [UserController::class, 'block'])->name('users.block');
+        Route::post('users/{user}/send-reset', [UserController::class, 'sendPasswordReset'])->name('users.send-reset');
+        //Product routes
+        Route::get('products/trashed', [ProductController::class, 'trashed'])->name('products.trashed');
+        Route::put('products/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
+        Route::delete('products/{id}/force-delete', [ProductController::class, 'forceDelete'])->name('products.force-delete');
+        Route::resource('products', ProductController::class);
+         // Category routes
+        Route::get('categories/trashed', [CategoryAdminController::class, 'trashed'])->name('categories.trashed');
+        Route::post('categories/{id}/restore', [CategoryAdminController::class, 'restore'])->name('categories.restore');
+        Route::delete('categories/{id}/force-delete', [CategoryAdminController::class, 'forceDelete'])->name('categories.force-delete');
+        Route::resource('categories', CategoryAdminController::class);
+        
+        // Order management routes
+        Route::get('/orders', [OrderAdminController::class, 'index'])->name('orders.index');
+        Route::get('/orders/{order}', [OrderAdminController::class, 'show'])->name('orders.show');
+        Route::post('/orders/{order}/update-status', [OrderAdminController::class, 'updateStatus'])->name('orders.update-status');
+        //Promotion routes
+        Route::resource('promotions', PromotionController::class);
+        Route::get('/promotions', [PromotionController::class, 'index'])->name('promotions.index');
+        Route::get('/promotions/form', [PromotionController::class, 'form'])->name('promotions.form');
+        Route::post('/promotions', [PromotionController::class, 'store'])->name('promotions.store');
+        
+        Route::get('/promotions/{promotion}', [PromotionController::class, 'show'])->name('promotions.show');
+        Route::put('/promotions/{promotion}', [PromotionController::class, 'update'])->name('promotions.update');
+        Route::delete('/promotions/{promotion}', [PromotionController::class, 'destroy'])->name('promotions.destroy');
+    });
+
+   
+   
+
+});
+
+

@@ -1,4 +1,22 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Cấu hình Toastr
+    toastr.options = {
+        "closeButton": true,
+        "debug": false,
+        "newestOnTop": false,
+        "progressBar": true,
+        "positionClass": "toast-bottom-right",
+        "preventDuplicates": false,
+        "onclick": null,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "5000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    };
     // Kiểm tra trạng thái wishlist cho tất cả sản phẩm
     document.querySelectorAll('.add-to-wishlist').forEach(button => {
         const productId = button.dataset.productId;
@@ -124,14 +142,14 @@ function toggleWishlist(productId, button) {
 
             // Thông báo thành công
             const message = isInWishlist ? 'Đã xóa khỏi danh sách yêu thích' : 'Đã thêm vào danh sách yêu thích';
-            alert(message);
+            toastr.success(message);
         } else {
-            alert(data.message || 'Có lỗi xảy ra');
+            toastr.error(data.message || 'Có lỗi xảy ra');
         }
     })
     .catch(error => {
         console.error('Error:', error);
         if (error === 'Unauthorized') return;
-        alert('Có lỗi xảy ra khi thao tác với danh sách yêu thích. Vui lòng thử lại sau.');
+        toastr.error('Có lỗi xảy ra khi thao tác với danh sách yêu thích. Vui lòng thử lại sau.');
     });
 }

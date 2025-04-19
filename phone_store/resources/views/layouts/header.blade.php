@@ -34,6 +34,24 @@
                         <span class="ms-2 d-none d-lg-inline">Đăng nhập</span>
                     </a>
                 @else
+                    <!-- Notification Dropdown -->
+                    <div class="dropdown notification-dropdown">
+                        <a href="#" class="text-dark text-decoration-none dropdown-toggle position-relative" data-bs-toggle="dropdown">
+                            <i class="bi bi-bell"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-badge" style="display: none;">
+                                0
+                            </span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end notification-menu" style="width: 300px; max-height: 400px; overflow-y: auto;">
+                            <h6 class="dropdown-header">Thông báo</h6>
+                            <div class="notifications-container">
+                                <!-- Notifications will be inserted here -->
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-center" href="#">Xem tất cả</a>
+                        </div>
+                    </div>
+
                     <div class="dropdown">
                         <a href="#" class="text-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
                             <i class="bi bi-person-circle"></i>
@@ -108,4 +126,113 @@
     </div>
 </div>
 
-<link rel="stylesheet" href="{{ assert('css/styleHeart.css')}}">
+<!-- <link rel="stylesheet" href="{{ assert('css/styleHeart.css')}}"> -->
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    function checkNotifications() {
+        fetch('/check-promotions')
+            .then(response => response.json())
+            .then(data => {
+                const container = document.querySelector('.notifications-container');
+                const badge = document.querySelector('.notification-badge');
+                let notificationCount = 0;
+                
+                // Clear existing notifications
+                container.innerHTML = '';
+                
+                // Add upcoming promotions
+                data.upcoming.forEach(promotion => {
+                    notificationCount++;
+                    const item = document.createElement('a');
+                    item.href = '#';
+                    item.className = 'dropdown-item notification-item';
+                    item.innerHTML = `
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <p class="mb-1">${promotion.message}</p>
+                                ${promotion.minutes_until_start ? 
+                                    `<small class="text-muted">Còn ${promotion.minutes_until_start} phút</small>` : 
+                                    ''}
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(item);
+                });
+                
+                // Add started promotions
+                data.started.forEach(promotion => {
+                    notificationCount++;
+                    const item = document.createElement('a');
+                    item.href = '#';
+                    item.className = 'dropdown-item notification-item';
+                    item.innerHTML = `
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <p class="mb-1">${promotion.message}</p>
+                                <small class="text-muted">Vừa bắt đầu</small>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(item);
+                });
+                
+                // Update badge
+                if (notificationCount > 0) {
+                    badge.style.display = 'block';
+                    badge.textContent = notificationCount;
+                } else {
+                    badge.style.display = 'none';
+                }
+                
+                // If no notifications
+                if (notificationCount === 0) {
+                    const emptyMessage = document.createElement('div');
+                    emptyMessage.className = 'dropdown-item text-center text-muted';
+                    emptyMessage.textContent = 'Không có thông báo mới';
+                    container.appendChild(emptyMessage);
+                }
+            })
+            .catch(error => console.error('Error checking notifications:', error));
+    }
+
+    // Check notifications every minute
+    checkNotifications();
+    setInterval(checkNotifications, 60000);
+});
+</script>
+
+<style>
+.notification-dropdown .dropdown-menu {
+    padding: 0;
+    margin-top: 0.5rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.notification-item {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.notification-item:hover {
+    background-color: #f8f9fa;
+}
+
+.notification-item p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #333;
+}
+
+.notification-item small {
+    font-size: 0.75rem;
+}
+
+.dropdown-header {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    padding: 0.75rem 1rem;
+}
+</style>
+@endpush

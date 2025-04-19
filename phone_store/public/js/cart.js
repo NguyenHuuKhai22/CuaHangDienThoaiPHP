@@ -1,4 +1,22 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Cấu hình Toastr
+    toastr.options = {
+        "closeButton": true,
+        "debug": false,
+        "newestOnTop": false,
+        "progressBar": true,
+        "positionClass": "toast-bottom-right",
+        "preventDuplicates": false,
+        "onclick": null,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "5000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    };
     // Xử lý nút thêm vào giỏ hàng
     document.querySelectorAll('.add-to-cart').forEach(button => {
         button.addEventListener('click', function() {
@@ -51,7 +69,7 @@ function addToCart(productId) {
         
         console.log('Response data:', data);
         if (data.success) {
-            alert('Sản phẩm đã được thêm vào giỏ hàng');
+            toastr.success('Sản phẩm đã được thêm vào giỏ hàng');
             if (data.cartCount !== undefined) {
                 // Update the cart count badge in the header
                 const cartBadges = document.querySelectorAll('a[href="/cart"] .badge');
@@ -72,7 +90,7 @@ function addToCart(productId) {
                 }
             }
         } else {
-            alert(data.message || 'Có lỗi xảy ra khi thêm vào giỏ hàng');
+            toastr.error(data.message || 'Có lỗi xảy ra khi thêm vào giỏ hàng');
         }
     })
     .catch(error => {
@@ -81,6 +99,6 @@ function addToCart(productId) {
             // Already handled in the response check
             return;
         }
-        alert('Có lỗi xảy ra khi thêm vào giỏ hàng. Vui lòng thử lại sau.');
+        toastr.error('Có lỗi xảy ra khi thêm vào giỏ hàng. Vui lòng thử lại sau.');
     });
 } 

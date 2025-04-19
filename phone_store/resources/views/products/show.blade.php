@@ -3,74 +3,9 @@
 @section('title', $product->name . ' - KAIRA')
 
 @push('styles')
-<style>
-.color-btn.active {
-    background-color: #000 !important;
-    color: #fff !important;
-    border-color: #000 !important;
-}
 
-.color-btn:not(.active) {
-    background-color: transparent !important;
-    color: #000 !important;
-    border-color: #000 !important;
-}
+<link rel="stylesheet" href="{{ asset('css/styleProductDetail.css')}}">
 
-.color-btn:hover {
-    background-color: #000 !important;
-    color: #fff !important;
-}
-
-.product-carousel {
-    position: relative;
-    margin-bottom: 1rem;
-}
-
-.product-carousel .carousel-item img {
-    width: 100%;
-    height: 500px;
-    object-fit: cover;
-}
-
-.product-thumbnails {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: 1rem;
-}
-
-.product-thumbnail {
-    width: 80px;
-    height: 80px;
-    cursor: pointer;
-    opacity: 0.6;
-    transition: opacity 0.3s ease;
-    border: 2px solid transparent;
-}
-
-.product-thumbnail:hover,
-.product-thumbnail.active {
-    opacity: 1;
-    border-color: #000;
-}
-
-.product-thumbnail img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.input-group input[type="number"] {
-    text-align: center;
-}
-
-.input-group button {
-    width: 40px;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-</style>
 @endpush
 
 @section('content')
@@ -208,7 +143,7 @@
                         <button class="btn btn-dark btn-lg rounded-0 add-to-cart" data-product-id="{{ $product->id }}">
                             <i class="bi bi-cart-plus me-2"></i>Thêm vào giỏ hàng
                         </button>
-                        <button class="btn btn-outline-dark btn-lg rounded-0 add-to-wishlist" 
+                        <button class="btn btn-dark btn-lg rounded-0 add-to-wishlist" 
                                 data-product-id="{{ $product->id }}">
                             <i class="bi bi-heart me-2"></i>
                             <span class="wishlist-text">Thêm vào yêu thích</span>

@@ -10,6 +10,9 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use App\Notifications\ResetPasswordNotification;
 
+/**
+ * @method bool isAdmin()
+ */
 class User extends Authenticatable implements CanResetPasswordContract
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -46,10 +49,14 @@ class User extends Authenticatable implements CanResetPasswordContract
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'is_blocked' => 'boolean',
+        'blocked_at' => 'datetime',
     ];
 
     /**
      * Check if user is admin
+     * 
+     * @return bool
      */
     public function isAdmin(): bool
     {
@@ -97,5 +104,9 @@ class User extends Authenticatable implements CanResetPasswordContract
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new ResetPasswordNotification($token));
+    }
+    public function isBlocked(): bool
+    {
+        return $this->is_blocked;
     }
 }

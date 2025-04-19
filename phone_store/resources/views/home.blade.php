@@ -31,53 +31,7 @@
     </div>
 </section>
 
-@push('styles')
-<style>
-    .hero-section {
-        overflow: hidden;
-    }
-    
-    .hero-background {
-        z-index: 1;
-    }
-    
-    .hero-background img {
-        object-position: center;
-    }
-    
-    .container {
-        z-index: 2;
-    }
-    
-    .hero-content {
-        animation: fadeInUp 1s ease;
-    }
-    
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    .btn-warning {
-        background-color: #ffc107;
-        border-color: #ffc107;
-        color: #000;
-        transition: all 0.3s ease;
-    }
-    
-    .btn-warning:hover {
-        background-color: #ffca2c;
-        border-color: #ffca2c;
-        transform: translateY(-2px);
-    }
-</style>
-@endpush
+
 
 <!-- Categories Section -->
 <section class="categories-section py-5">
@@ -121,85 +75,7 @@
     </div>
 </section>
 
-@push('styles')
-<style>
-    .categories-section {
-        background-color: #f8f9fa;
-    }
 
-    .categories-slider {
-        padding: 1rem 0;
-        margin: 0 25px;
-    }
-
-    .categories-slider .swiper-slide {
-        width: 340px;
-        margin-right: 25px;
-    }
-
-    .category-card {
-        border-radius: 15px;
-        overflow: hidden;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        transition: all 0.3s ease;
-    }
-
-    .category-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-    }
-
-    .category-image {
-        position: relative;
-        height: 290px;
-        overflow: hidden;
-    }
-
-    .category-overlay {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        padding: 2rem;
-        background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-        transform: translateY(0);
-        transition: all 0.3s ease;
-    }
-
-    .category-card:hover .category-overlay {
-        transform: translateY(-10px);
-    }
-
-    .view-more {
-        color: #ffc107;
-        font-weight: 500;
-        display: inline-flex;
-        align-items: center;
-        transition: all 0.3s ease;
-    }
-
-    .category-card:hover .view-more {
-        color: #fff;
-    }
-
-    .category-prev,
-    .category-next {
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        opacity: 0.8;
-    }
-
-    .category-prev:hover,
-    .category-next:hover {
-        background-color: #fff;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-        transform: translateY(-50%) scale(1.1);
-        opacity: 1;
-    }
-</style>
-@endpush
 
 <!-- Featured Products -->
 <section class="py-5 bg-light" id="featured-products">
@@ -271,25 +147,7 @@
     </div>
 </section>
 
-<!-- Collection Banner -->
-<!-- <section class="py-5">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-md-6">
-                <div class="position-relative overflow-hidden" style="height: 500px;">
-                    <img src="{{ asset('images/collection-banner.jpg') }}" 
-                         alt="Collection" 
-                         class="w-100 h-100 object-fit-cover">
-                </div>
-            </div>
-            <div class="col-md-5 offset-md-1">
-                <h2 class="mb-4" style="font-family: 'Marcellus', serif;">Latest Smartphones</h2>
-                <p class="mb-4 text-muted">Experience the future of mobile technology with our premium smartphone collection. Featuring cutting-edge innovations, stunning cameras, and powerful performance.</p>
-                <a href="#" class="btn btn-dark rounded-0 px-5 py-3">EXPLORE NOW</a>
-            </div>
-        </div>
-    </div>
-</section> -->
+
 
 <!-- New Arrivals -->
 <section class="py-5 bg-light">
@@ -326,7 +184,9 @@
 </section>
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/styleHeart.css') }}">
+
+<link rel="stylesheet" href="{{ asset('css/home.css')}}">
+<link rel="stylesheet" href="{{ asset('css/styleHeart.css') }}">
 @endpush
 
 @push('scripts')
