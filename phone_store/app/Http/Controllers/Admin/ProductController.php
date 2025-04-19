@@ -62,7 +62,11 @@ class ProductController extends Controller
         return redirect()->route('admin.products.index')
             ->with('success', 'Sản phẩm đã được tạo thành công.');
     }
-
+    public function edit(Product $product)
+    {
+        $categories = Category::all();
+        return view('admin.products.edit', compact('product', 'categories'));
+    }
     public function update(Request $request, Product $product)
     {
         $validated = $request->validate([

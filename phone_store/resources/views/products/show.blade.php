@@ -75,10 +75,13 @@
                 <!-- Price -->
                 <div class="mb-4">
                     @if($product->discount_price)
-                        <h2 class="text-danger mb-0 d-inline" id="productOriginalPrice">
-                            <del>{{ $product->formatted_price }}</del>
+                    
+                        
+                        <h2 class="text-danger mb-0 d-inline" id="productDiscountPrice">{{ $product->formatted_discount_price }}
                         </h2>
-                        <h2 class="text-danger mb-0 d-inline" id="productDiscountPrice">{{ $product->formatted_discount_price }}</h2>
+                        <h2 class="text-muted mb-0 d-inline ms-2" id="productOriginalPrice">
+                        <del>{{ $product->formatted_price }}</del>
+                        </h2>
                         <div class="mt-2">
                             <span class="badge bg-danger">Giảm giá</span>
                         </div>

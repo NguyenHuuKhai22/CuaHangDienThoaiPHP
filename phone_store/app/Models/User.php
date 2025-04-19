@@ -105,6 +105,7 @@ class User extends Authenticatable implements CanResetPasswordContract
     {
         $this->notify(new ResetPasswordNotification($token));
     }
+    //kiểm tra người dùng có bị chặn không
     public function isBlocked(): bool
     {
         return $this->is_blocked;

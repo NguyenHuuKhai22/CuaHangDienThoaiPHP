@@ -4,13 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Mail;
+use App\Traits\SendPaymentEmail;
 class MomoPaymentController extends Controller
 {
+    use SendPaymentEmail;
     // Các hằng số trạng thái thanh toán
     const PAYMENT_SUCCESS = 'paid';
     const PAYMENT_FAILED = 'payment_failed';
@@ -91,7 +94,7 @@ class MomoPaymentController extends Controller
             ]);
         }
     }
-
+    
     /**
      * Xử lý callback từ Momo
      */
@@ -117,146 +120,162 @@ class MomoPaymentController extends Controller
 
             // Nếu không có resultCode hoặc là mã hủy giao dịch (1006)
             if (!$request->has('resultCode') || $request->resultCode == '1006') {
-                Log::info('Momo payment cancelled', [
-                    'order_code' => $orderData['order_code']
-                ]);
-
-                DB::beginTransaction();
-                try {
-                    // Create order with failed status
-                    $orderData['status'] = 'cancelled';
-                    $orderData['payment_status'] = 'failed';
-                    $order = Order::create($orderData);
-                    
-                    // Create order items
-                    foreach ($cartItems as $item) {
-                        OrderItem::create([
-                            'order_id' => $order->id,
-                            'product_id' => $item['product_id'],
-                            'quantity' => $item['quantity'],
-                            'price' => $item['price'],
-                            'product_name' => $item['product_name'],
-                            'product_image' => $item['product_image'],
-                            'product_color' => $item['product_color'],
-                            'product_ram' => $item['product_ram'],
-                            'product_storage' => $item['product_storage']
-                        ]);
-                    }
-                    
-                    DB::commit();
-                    
-                    // Clear session data
-                    session()->forget('pending_order');
-                    
-                    return redirect()->route('payment.failed')
-                        ->with('error', 'Bạn đã hủy giao dịch thanh toán');
-                } catch (\Exception $e) {
-                    DB::rollBack();
-                    Log::error('Error creating cancelled order: ' . $e->getMessage());
-                    return redirect()->route('payment.failed')
-                        ->with('error', 'Có lỗi xảy ra khi xử lý hủy đơn hàng');
-                }
+                return $this->handleCancelledPayment($orderData, $cartItems);
             }
 
             // Kiểm tra thanh toán thành công (resultCode = 0)
             if ($request->resultCode == '0') {
-                Log::info('Momo payment successful', [
-                    'order_code' => $orderData['order_code'],
-                    'transId' => $request->transId ?? 'No transId'
-                ]);
-
-                DB::beginTransaction();
-                try {
-                    // Create order with failed status
-                    $orderData['status'] = 'pending';
-                    $orderData['payment_status'] = 'paid';
-                    $order = Order::create($orderData);
-                    
-                    // Create order items
-                    foreach ($cartItems as $item) {
-                        OrderItem::create([
-                            'order_id' => $order->id,
-                            'product_id' => $item['product_id'],
-                            'quantity' => $item['quantity'],
-                            'price' => $item['price'],
-                            'product_name' => $item['product_name'],
-                            'product_image' => $item['product_image'],
-                            'product_color' => $item['product_color'],
-                            'product_ram' => $item['product_ram'],
-                            'product_storage' => $item['product_storage']
-                        ]);
-                    }
-                    
-                    // Xóa giỏ hàng
-                    $cart = Auth::user()->cart;
-                    if ($cart) {
-                        $cart->cartItems()->delete();
-                        $cart->delete();
-                    }
-                    
-                    DB::commit();
-                    
-                    // Clear session data
-                    session()->forget('pending_order');
-                    
-                    // Chuyển đến trang thanh toán thành công
-                    return redirect()->route('payment.success')
-                        ->with('success', 'Thanh toán thành công');
-                } catch (\Exception $e) {
-                    DB::rollBack();
-                    Log::error('Error creating successful order: ' . $e->getMessage());
-                    return redirect()->route('payment.failed')
-                        ->with('error', 'Có lỗi xảy ra khi tạo đơn hàng');
-                }
-            } else {
-                // Thanh toán thất bại (các mã lỗi khác)
-                Log::error('Momo payment failed', [
-                    'order_code' => $orderData['order_code'],
-                    'resultCode' => $request->resultCode,
-                    'message' => $request->message
-                ]);
-
-                DB::beginTransaction();
-                try {
-                    // Create order with failed status
-                    $orderData['status'] = self::PAYMENT_FAILED;
-                    $orderData['payment_status'] = 'failed';
-                    $order = Order::create($orderData);
-                    
-                    // Create order items
-                    foreach ($cartItems as $item) {
-                        OrderItem::create([
-                            'order_id' => $order->id,
-                            'product_id' => $item['product_id'],
-                            'quantity' => $item['quantity'],
-                            'price' => $item['price'],
-                            'product_name' => $item['product_name'],
-                            'product_image' => $item['product_image'],
-                            'product_color' => $item['product_color'],
-                            'product_ram' => $item['product_ram'],
-                            'product_storage' => $item['product_storage']
-                        ]);
-                    }
-                    
-                    DB::commit();
-                    
-                    // Clear session data
-                    session()->forget('pending_order');
-                    
-                    return redirect()->route('payment.failed')
-                        ->with('error', 'Thanh toán thất bại. ' . ($request->message ?? ''));
-                } catch (\Exception $e) {
-                    DB::rollBack();
-                    Log::error('Error creating failed order: ' . $e->getMessage());
-                    return redirect()->route('payment.failed')
-                        ->with('error', 'Có lỗi xảy ra khi xử lý đơn hàng');
-                }
+                return $this->handleSuccessfulPayment($request, $orderData, $cartItems);
             }
+
+            // Thanh toán thất bại (các mã lỗi khác)
+            return $this->handleFailedPayment($request, $orderData, $cartItems);
         } catch (\Exception $e) {
             Log::error('Momo callback error: ' . $e->getMessage());
             return redirect()->route('payment.failed')
                 ->with('error', 'Có lỗi xảy ra trong quá trình xử lý thanh toán');
         }
+    }
+    
+    /**
+     * Xử lý thanh toán thành công
+     */
+    private function handleSuccessfulPayment($request, $orderData, $cartItems)
+    {
+        Log::info('Momo payment successful', [
+            'order_code' => $orderData['order_code'],
+            'transId' => $request->transId ?? 'No transId'
+        ]);
+
+        return DB::transaction(function() use ($request, $orderData, $cartItems) {
+            // Tạo đơn hàng
+            $order = Order::create([
+                ...$orderData,
+                'status' => 'pending',
+                'payment_status' => 'paid',
+                'transaction_id' => $request->transId
+            ]);
+            
+            // Tạo chi tiết đơn hàng và cập nhật số lượng tồn kho
+            foreach ($cartItems as $item) {
+                // Tạo chi tiết đơn hàng
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $item['product_id'],
+                    'quantity' => $item['quantity'],
+                    'price' => $item['price'],
+                    'product_name' => $item['product_name'],
+                    'product_image' => $item['product_image'],
+                    'product_color' => $item['product_color'],
+                    'product_ram' => $item['product_ram'],
+                    'product_storage' => $item['product_storage']
+                ]);
+
+                // Cập nhật số lượng tồn kho
+                $product = Product::find($item['product_id']);
+                if ($product) {
+                    $product->decrement('stock_quantity', $item['quantity']);
+                }
+            }
+            
+            // Xóa giỏ hàng
+            $cart = Auth::user()->cart;
+            if ($cart) {
+                $cart->cartItems()->delete();
+                $cart->delete();
+            }
+
+                // Gửi email thông báo
+                
+                $emailSent = $this->sendPaymentEmail($order);
+            // Xóa session
+            session()->forget('pending_order');
+            
+            return redirect()->route('payment.success')
+                ->with('success', 'Thanh toán thành công');
+        });
+    }
+
+    /**
+     * Xử lý thanh toán bị hủy
+     */
+    private function handleCancelledPayment($orderData, $cartItems)
+    {
+        Log::info('Momo payment cancelled', [
+            'order_code' => $orderData['order_code']
+        ]);
+
+        return DB::transaction(function() use ($orderData, $cartItems) {
+            // Tạo đơn hàng với trạng thái hủy
+            $order = Order::create([
+                ...$orderData,
+                'status' => 'cancelled',
+                'payment_status' => 'failed'
+            ]);
+            
+            // Tạo chi tiết đơn hàng
+            foreach ($cartItems as $item) {
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $item['product_id'],
+                    'quantity' => $item['quantity'],
+                    'price' => $item['price'],
+                    'product_name' => $item['product_name'],
+                    'product_image' => $item['product_image'],
+                    'product_color' => $item['product_color'],
+                    'product_ram' => $item['product_ram'],
+                    'product_storage' => $item['product_storage']
+                ]);
+            }
+            
+            // Xóa session
+            session()->forget('pending_order');
+            
+            return redirect()->route('payment.failed')
+                ->with('error', 'Bạn đã hủy giao dịch thanh toán');
+        });
+    }
+
+    /**
+     * Xử lý thanh toán thất bại
+     */
+    private function handleFailedPayment($request, $orderData, $cartItems)
+    {
+        Log::error('Momo payment failed', [
+            'order_code' => $orderData['order_code'],
+            'resultCode' => $request->resultCode,
+            'message' => $request->message
+        ]);
+
+        return DB::transaction(function() use ($request, $orderData, $cartItems) {
+            // Tạo đơn hàng với trạng thái thất bại
+            $order = Order::create([
+                ...$orderData,
+                'status' => 'cancelled',
+                'payment_status' => 'failed'
+            ]);
+            
+            // Tạo chi tiết đơn hàng
+            foreach ($cartItems as $item) {
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $item['product_id'],
+                    'quantity' => $item['quantity'],
+                    'price' => $item['price'],
+                    'product_name' => $item['product_name'],
+                    'product_image' => $item['product_image'],
+                    'product_color' => $item['product_color'],
+                    'product_ram' => $item['product_ram'],
+                    'product_storage' => $item['product_storage']
+                ]);
+            }
+            
+            // Xóa session
+            session()->forget('pending_order');
+            
+            return redirect()->route('payment.failed')
+                ->with('error', 'Thanh toán thất bại. ' . ($request->message ?? ''));
+        });
     }
 
     /**
@@ -300,8 +319,7 @@ class MomoPaymentController extends Controller
             }
 
             if ($request->resultCode == 0) {
-                DB::beginTransaction();
-                try {
+                DB::transaction(function() use ($request, $order) {
                     // Cập nhật trạng thái thanh toán thành paid
                     $order->update([
                         'status' => 'pending',
@@ -314,17 +332,12 @@ class MomoPaymentController extends Controller
                         $order->user->cart->cartItems()->delete();
                         $order->user->cart->delete();
                     }
+                });
 
-                    DB::commit();
-                    Log::info('Momo payment completed successfully', [
-                        'order_code' => $order->order_code,
-                        'transaction_id' => $request->transId
-                    ]);
-                } catch (\Exception $e) {
-                    DB::rollBack();
-                    Log::error('Error updating order status: ' . $e->getMessage());
-                    return response()->json(['message' => 'Error updating order'], 500);
-                }
+                Log::info('Momo payment completed successfully', [
+                    'order_code' => $order->order_code,
+                    'transaction_id' => $request->transId
+                ]);
             } else {
                 $order->update([
                     'status' => self::PAYMENT_FAILED,

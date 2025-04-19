@@ -11,29 +11,47 @@ use Carbon\Carbon;
 
 class PromotionController extends Controller
 {
+    /**
+     * Hiển thị danh sách khuyến mãi
+     * Phân trang 10 khuyến mãi mỗi trang
+     * Sắp xếp theo thời gian tạo mới nhất
+     */
     public function index()
     {
         $promotions = Promotion::latest()->paginate(10);
         return view('admin.promotions.index', compact('promotions'));
     }
 
+    /**
+     * Hiển thị form tạo khuyến mãi mới
+     * Lấy danh sách sản phẩm đang hoạt động
+     */
     public function create()
     {
         $products = Product::where('status', 1)->get();
         return view('admin.promotions.form', compact('products'));
     }
 
+    /**
+     * Tính toán giá khuyến mãi cho sản phẩm
+     * @param Product $product - Sản phẩm cần tính giá
+     * @param Promotion $promotion - Khuyến mãi áp dụng
+     * @return float|null - Giá sau khuyến mãi hoặc null nếu không áp dụng được
+     */
     private function calculateDiscountPrice($product, $promotion)
     {
+        // Kiểm tra khuyến mãi có đang hoạt động không
         if (!$promotion->is_active) {
             return null;
         }
 
+        // Kiểm tra thời gian khuyến mãi
         $now = now();
         if ($now < $promotion->start_date || $now > $promotion->end_date) {
             return null;
         }
 
+        // Tính giá theo loại khuyến mãi (phần trăm hoặc số tiền cố định)
         if ($promotion->discount_type == 'percentage') {
             return round($product->price * (1 - $promotion->discount_value/100));
         } else {
@@ -41,10 +59,15 @@ class PromotionController extends Controller
         }
     }
 
+    /**
+     * Cập nhật giá khuyến mãi cho danh sách sản phẩm
+     * @param Collection $products - Danh sách sản phẩm cần cập nhật
+     * @param Promotion|null $promotion - Khuyến mãi mới (nếu có)
+     */
     private function updateProductDiscounts($products, $promotion = null)
     {
         foreach ($products as $product) {
-            // Nếu có promotion mới và đang active
+            // Nếu có khuyến mãi mới và đang active
             if ($promotion && $promotion->is_active) {
                 $discountPrice = $this->calculateDiscountPrice($product, $promotion);
                 if ($discountPrice !== null) {
@@ -69,8 +92,14 @@ class PromotionController extends Controller
         }
     }
 
+    /**
+     * Lưu khuyến mãi mới vào database
+     * @param Request $request - Dữ liệu từ form
+     * @return RedirectResponse - Chuyển hướng về danh sách khuyến mãi
+     */
     public function store(Request $request)
     {
+        // Validate dữ liệu đầu vào
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -84,6 +113,7 @@ class PromotionController extends Controller
 
         DB::beginTransaction();
         try {
+            // Tạo khuyến mãi mới
             $promotion = Promotion::create([
                 'name' => $request->name,
                 'description' => $request->description,
@@ -94,6 +124,7 @@ class PromotionController extends Controller
                 'is_active' => true
             ]);
 
+            // Lấy danh sách sản phẩm và tạo liên kết
             $products = Product::whereIn('id', $request->products)->get();
             $promotion->products()->attach($request->products);
             
@@ -109,10 +140,16 @@ class PromotionController extends Controller
         }
     }
 
+    /**
+     * Hiển thị chi tiết khuyến mãi
+     * @param Promotion $promotion - Khuyến mãi cần xem
+     * @return View - Trang hiển thị chi tiết
+     */
     public function show(Promotion $promotion)
     {
         $promotion->load('products');
         
+        // Tính toán trạng thái và thời gian đếm ngược
         $now = now()->timestamp;
         $status = 'inactive';
         $countdown = null;
@@ -146,6 +183,11 @@ class PromotionController extends Controller
         return view('admin.promotions.show', compact('promotion', 'status', 'countdown'));
     }
 
+    /**
+     * Lấy trạng thái khuyến mãi (API)
+     * @param Promotion $promotion - Khuyến mãi cần kiểm tra
+     * @return JsonResponse - Trạng thái và thời gian đếm ngược
+     */
     public function getPromotionStatus(Promotion $promotion)
     {
         $now = now()->timestamp;
@@ -185,6 +227,11 @@ class PromotionController extends Controller
         ]);
     }
 
+    /**
+     * Hiển thị form chỉnh sửa khuyến mãi
+     * @param Promotion $promotion - Khuyến mãi cần chỉnh sửa
+     * @return View - Trang form chỉnh sửa
+     */
     public function edit(Promotion $promotion)
     {
         $products = Product::where('status', 1)->get();
@@ -192,8 +239,15 @@ class PromotionController extends Controller
         return view('admin.promotions.edit', compact('promotion', 'products', 'selectedProducts'));
     }
 
+    /**
+     * Cập nhật thông tin khuyến mãi
+     * @param Request $request - Dữ liệu từ form
+     * @param Promotion $promotion - Khuyến mãi cần cập nhật
+     * @return RedirectResponse - Chuyển hướng về danh sách khuyến mãi
+     */
     public function update(Request $request, Promotion $promotion)
     {
+        // Validate dữ liệu đầu vào
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -210,6 +264,7 @@ class PromotionController extends Controller
             // Lấy danh sách sản phẩm cũ để cập nhật lại giá
             $oldProducts = $promotion->products()->get();
 
+            // Cập nhật thông tin khuyến mãi
             $promotion->update([
                 'name' => $request->name,
                 'description' => $request->description,
@@ -219,7 +274,7 @@ class PromotionController extends Controller
                 'end_date' => Carbon::parse($request->end_date)
             ]);
 
-            // Cập nhật lại giá cho sản phẩm cũ (tìm khuyến mãi khác nếu có)
+            // Cập nhật lại giá cho sản phẩm cũ
             $this->updateProductDiscounts($oldProducts);
 
             // Cập nhật danh sách sản phẩm mới
@@ -238,6 +293,11 @@ class PromotionController extends Controller
         }
     }
 
+    /**
+     * Xóa khuyến mãi
+     * @param Promotion $promotion - Khuyến mãi cần xóa
+     * @return RedirectResponse - Chuyển hướng về danh sách khuyến mãi
+     */
     public function destroy(Promotion $promotion)
     {
         DB::beginTransaction();
@@ -251,7 +311,7 @@ class PromotionController extends Controller
             // Xóa khuyến mãi
             $promotion->delete();
             
-            // Cập nhật lại giá cho các sản phẩm (tìm khuyến mãi khác nếu có)
+            // Cập nhật lại giá cho các sản phẩm
             $this->updateProductDiscounts($products);
             
             DB::commit();
@@ -263,6 +323,11 @@ class PromotionController extends Controller
         }
     }
 
+    /**
+     * Bật/tắt trạng thái khuyến mãi (API)
+     * @param Promotion $promotion - Khuyến mãi cần thay đổi trạng thái
+     * @return JsonResponse - Kết quả thay đổi trạng thái
+     */
     public function toggleStatus(Promotion $promotion)
     {
         DB::beginTransaction();

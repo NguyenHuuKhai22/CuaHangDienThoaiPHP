@@ -4,13 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Traits\SendPaymentEmail;
 
 class VNPayPaymentController extends Controller
 {
+    use SendPaymentEmail;
     /**
      * Các hằng số trạng thái thanh toán
      */
@@ -359,7 +362,7 @@ class VNPayPaymentController extends Controller
             $this->updateOrderTransaction($order, $request->vnp_TransactionNo);
             $this->clearCart();
             $this->clearSession();
-            
+            $emailSent = $this->sendPaymentEmail($order);
             return redirect()->route('payment.success')
                 ->with('success', 'Thanh toán thành công');
         });
@@ -437,6 +440,7 @@ class VNPayPaymentController extends Controller
     private function createOrderItems($order, $cartItems)
     {
         foreach ($cartItems as $item) {
+            // Tạo chi tiết đơn hàng
             OrderItem::create([
                 'order_id' => $order->id,
                 'product_id' => $item['product_id'],
@@ -448,6 +452,12 @@ class VNPayPaymentController extends Controller
                 'product_ram' => $item['product_ram'],
                 'product_storage' => $item['product_storage']
             ]);
+
+            // Cập nhật số lượng tồn kho
+            $product = Product::find($item['product_id']);
+            if ($product) {
+                $product->decrement('stock_quantity', $item['quantity']);
+            }
         }
     }
 
