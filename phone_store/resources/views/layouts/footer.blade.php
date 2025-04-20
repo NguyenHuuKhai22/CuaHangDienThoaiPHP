@@ -57,7 +57,9 @@
                     <p class="mb-md-0 text-muted">&copy; 2025 HK STORE. Đã đăng ký bản quyền.</p>
                 </div>
                 <div class="col-md-6 text-center text-md-end">
-                    <img src="{{ asset('images/payment-methods.png') }}" alt="Phương thức thanh toán" class="img-fluid" style="max-height: 24px;">
+                    <img src="{{ asset('images/payment/momo.png') }}" alt="Phương thức thanh toán" class="img-fluid" style="max-height: 24px;">
+                    <img src="{{ asset('images/payment/vnpay.png') }}" alt="Phương thức thanh toán" class="img-fluid" style="max-height: 24px;">
+                    <i class="bi bi-cash-stack me-2" style="font-size: 24px;"></i>
                 </div>
             </div>
         </div>

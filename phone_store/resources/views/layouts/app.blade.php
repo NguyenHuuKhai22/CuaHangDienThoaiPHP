@@ -24,72 +24,13 @@
     <!-- toastr -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
     <!-- Custom CSS -->
-    <style>
-        body {
-            font-family: 'Mulish', sans-serif;
-            color: #333;
-            padding-top: 80px; /* Add padding to prevent content from being hidden under fixed header */
-        }
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1030;
-            background: #fff;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Marcellus', serif;
-        }
-        .navbar-nav .nav-link {
-            font-size: 14px;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-            padding: 0 15px;
-        }
-        .navbar-brand {
-            font-family: 'Marcellus', serif;
-            font-size: 24px;
-        }
-        .hero-title {
-            font-size: 60px;
-            margin-bottom: 20px;
-        }
-        .hero-text {
-            color: #666;
-            font-size: 16px;
-            line-height: 1.8;
-            max-width: 600px;
-            margin: 0 auto 40px;
-        }
-        .collection-title {
-            font-size: 20px;
-            margin: 20px 0 10px;
-        }
-        .collection-text {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 15px;
-        }
-        .discover-link {
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            text-decoration: none;
-            color: #333;
-            border-bottom: 1px solid #333;
-            padding-bottom: 2px;
-        }
-        .discover-link:hover {
-            color: #666;
-            border-color: #666;
-        }
-        main {
-            position: relative;
-            z-index: 1;
-        }
-    </style>
+    <link rel="stylesheet" href="{{asset('css/app.css')}}">
+
+<link rel="stylesheet" href="{{asset('css/IntersectionObserver.css')}}">
+<link rel="stylesheet" href="{{ asset('css/home.css')}}">
+<link rel="stylesheet" href="{{ asset('css/styleHeart.css') }}">
+
+
 
     @stack('styles')
 </head>
@@ -102,16 +43,99 @@
 
     @include('layouts.footer')
 
-   
+    <!-- Chat Widget -->
+    <div class="chat-widget">
+        <div class="chat-header">
+            <span>Chat với AI</span>
+            <div class="chat-header-controls">
+                <button class="close-chat" title="Đóng"><i class="bi bi-x"></i></button>
+            </div>
+        </div>
+        <div id="chat-messages" class="chat-messages">
+            <!-- Messages will appear here -->
+        </div>
+        <div class="chat-input-container">
+            <div class="chat-input-wrapper">
+                <input type="text" id="message-input" class="chat-input" placeholder="Nhập tin nhắn của bạn...">
+                <button onclick="sendMessage()" class="chat-send-btn"><i class="bi bi-send-fill"></i></button>
+            </div>
+        </div>
+    </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
+   
     <!-- Swiper JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
     <!-- toastr -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <!-- Chat Widget Script -->
+    <script>
+        function sendMessage() {
+            const messageInput = document.getElementById('message-input');
+            const message = messageInput.value.trim();
+            
+            if (message) {
+                // Add user message to chat
+                addMessage('user', message);
+                messageInput.value = '';
+                
+                // Send to server
+                fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({ message: message })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    addMessage('bot', data.response);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+        }
+
+        function addMessage(sender, message) {
+            const chatMessages = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender === 'user' ? 'user-message' : 'bot-message'}`;
+            messageDiv.textContent = message;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Allow sending message with Enter key
+        document.getElementById('message-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Chat widget functionality
+        const chatWidget = document.querySelector('.chat-widget');
+        const closeBtn = document.querySelector('.close-chat');
+
+        // Toggle expanded state on widget click
+        chatWidget.addEventListener('click', function(e) {
+            if (!chatWidget.classList.contains('expanded') || 
+                (!e.target.closest('.chat-input-container') && !e.target.closest('.chat-messages'))) {
+                chatWidget.classList.toggle('expanded');
+            }
+        });
+
+        // Close chat button functionality
+        closeBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            chatWidget.classList.remove('expanded');
+        });
+    </script>
+
     @stack('scripts')
 </body>
 </html> 

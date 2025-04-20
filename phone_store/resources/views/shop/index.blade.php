@@ -1,63 +1,17 @@
 @extends('layouts.app')
 
-@section('title', 'Cửa hàng - KAIRA Phone Store')
+@section('title', 'Cửa hàng - HK Phone Store')
 
 @push('styles')
-<style>
-.filter-section {
-    background: #f8f9fa;
-    padding: 1.5rem;
-    border-radius: 0.5rem;
-}
+<link rel="stylesheet" href="{{ asset('css/shop.css') }}">
 
-.filter-section .form-check {
-    margin-bottom: 0.5rem;
-}
 
-.product-card {
-    transition: all 0.3s ease;
-    border: none !important;
-}
-
-.product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-}
-
-.product-image {
-    height: 300px;
-    object-fit: cover;
-}
-
-.product-overlay {
-    background: rgba(255,255,255,0.9);
-    transition: all 0.3s ease;
-}
-
-.product-card:hover .product-overlay {
-    opacity: 1 !important;
-}
-
-.sort-select {
-    width: auto !important;
-}
-
-.category-filter.active {
-    color: #000;
-    font-weight: 600;
-}
-
-.price-filter.active {
-    color: #000;
-    font-weight: 600;
-}
-</style>
 @endpush
 
 @section('content')
 <div class="container py-5">
     <!-- Breadcrumb -->
-    <nav aria-label="breadcrumb" class="mb-4">
+    <nav aria-label="breadcrumb" class="mb-4 reveal-section">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-decoration-none text-muted">Trang chủ</a></li>
             <li class="breadcrumb-item active" aria-current="page">Cửa hàng</li>
@@ -66,12 +20,12 @@
 
     <div class="row g-4">
         <!-- Filters Sidebar -->
-        <div class="col-lg-3">
+        <div class="col-lg-3 reveal-section">
             <div class="filter-section">
                 <h5 class="mb-3">Danh mục sản phẩm</h5>
                 <div class="list-group list-group-flush">
                     <a href="{{ route('shop.index') }}" 
-                       class="list-group-item list-group-item-action category-filter {{ !request('category') ? 'active' : '' }}">
+                       class="list-group-item list-group-item-action category-filter  {{ !request('category') ? 'active' : '' }}">
                         Tất cả sản phẩm
                     </a>
                     @foreach($categories as $category)
@@ -105,9 +59,9 @@
         </div>
 
         <!-- Products Grid -->
-        <div class="col-lg-9">
+        <div class="col-lg-9 reveal-section">
             <!-- Sort Options -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-4 reveal-item">
                 <div>
                     <span class="text-muted">Hiển thị {{ $products->firstItem() ?? 0 }}-{{ $products->lastItem() ?? 0 }} / {{ $products->total() ?? 0 }} sản phẩm</span>
                 </div>
@@ -142,7 +96,7 @@
             @if($products->isNotEmpty())
                 <div class="row g-4">
                     @foreach($products as $product)
-                        <div class="col-md-4">
+                        <div class="col-md-4 reveal-item delay-{{ $loop->index % 6 }}">
                             <div class="card h-100 product-card">
                                 <div class="position-relative">
                                     <img src="{{ $product->image ? asset('images/products/' . $product->image) : asset('images/placeholder.jpg') }}" 
@@ -191,11 +145,11 @@
                 </div>
 
                 <!-- Pagination -->
-                <div class="d-flex justify-content-center mt-5">
+                <div class="d-flex justify-content-center mt-5 reveal-item">
                     {{ $products->links() }}
                 </div>
             @else
-                <div class="text-center py-5">
+                <div class="text-center py-5 reveal-item">
                     <i class="bi bi-search display-1 text-muted"></i>
                     <h3 class="mt-3">Không tìm thấy sản phẩm</h3>
                     <p class="text-muted">Không có sản phẩm nào phù hợp với bộ lọc của bạn</p>
@@ -214,4 +168,38 @@
 @push('scripts')
 <script src="{{ asset('js/cart.js') }}"></script>
 <script src="{{ asset('js/wishlisthome.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.2
+    };
+
+    const revealCallback = (entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+                
+                if (entry.target.classList.contains('reveal-section')) {
+                    const items = entry.target.querySelectorAll('.reveal-item');
+                    items.forEach((item, index) => {
+                        setTimeout(() => {
+                            item.classList.add('active');
+                        }, index * 100);
+                    });
+                }
+                
+                observer.unobserve(entry.target);
+            }
+        });
+    };
+
+    const observer = new IntersectionObserver(revealCallback, observerOptions);
+
+    document.querySelectorAll('.reveal-section, .reveal-item').forEach(element => {
+        observer.observe(element);
+    });
+});
+</script>
 @endpush 

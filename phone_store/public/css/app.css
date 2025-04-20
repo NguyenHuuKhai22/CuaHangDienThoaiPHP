@@ -1,0 +1,222 @@
+body {
+    font-family: 'Mulish', sans-serif;
+    color: #333;
+    padding-top: 80px; /* Add padding to prevent content from being hidden under fixed header */
+}
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1030;
+    background: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Marcellus', serif;
+}
+.navbar-nav .nav-link {
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    padding: 0 15px;
+}
+.navbar-brand {
+    font-family: 'Marcellus', serif;
+    font-size: 24px;
+}
+.hero-title {
+    font-size: 60px;
+    margin-bottom: 20px;
+}
+.hero-text {
+    color: #666;
+    font-size: 16px;
+    line-height: 1.8;
+    max-width: 600px;
+    margin: 0 auto 40px;
+}
+.collection-title {
+    font-size: 20px;
+    margin: 20px 0 10px;
+}
+.collection-text {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+.discover-link {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-decoration: none;
+    color: #333;
+    border-bottom: 1px solid #333;
+    padding-bottom: 2px;
+}
+.discover-link:hover {
+    color: #666;
+    border-color: #666;
+}
+main {
+    position: relative;
+    z-index: 1;
+}
+
+/* Chat Widget Styles */
+.chat-widget {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #0d6efd;
+    border-radius: 50%;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-widget:not(.expanded) {
+    width: 60px;
+    height: 60px;
+    cursor: pointer;
+}
+
+.chat-widget.expanded {
+    width: 300px;
+    height: 500px;
+    border-radius: 15px;
+    background: white;
+}
+
+.chat-widget:not(.expanded) .chat-header span,
+.chat-widget:not(.expanded) .chat-header-controls,
+.chat-widget:not(.expanded) .chat-messages,
+.chat-widget:not(.expanded) .chat-input-container {
+    display: none;
+}
+
+.chat-widget:not(.expanded)::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="%23fff"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M5 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>') center no-repeat;
+    background-size: 30px;
+}
+
+.chat-header {
+    padding: 15px 20px;
+    background: #0d6efd;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 60px;
+    font-weight: 500;
+}
+
+.chat-header-controls button {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 0;
+    font-size: 1.2rem;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.chat-header-controls button:hover {
+    opacity: 1;
+}
+
+.chat-messages {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background: #fff;
+    display: none;
+}
+
+.chat-input-container {
+    padding: 15px;
+    border-top: 1px solid #eee;
+    background: #fff;
+    display: none;
+}
+
+.chat-widget.expanded .chat-messages,
+.chat-widget.expanded .chat-input-container {
+    display: block;
+}
+
+.chat-input {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    margin-right: 10px;
+    outline: none;
+    font-size: 14px;
+}
+
+.chat-input:focus {
+    border-color: #0d6efd;
+}
+
+.chat-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.chat-send-btn {
+    position: absolute;
+    right: 10px;
+    background: #0d6efd;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.chat-send-btn:hover {
+    background: #0b5ed7;
+}
+
+.message {
+    margin-bottom: 10px;
+    padding: 10px 15px;
+    border-radius: 15px;
+    max-width: 85%;
+    word-wrap: break-word;
+}
+
+.user-message {
+    background: #0d6efd;
+    color: white;
+    margin-left: auto;
+    border-bottom-right-radius: 5px;
+}
+
+.bot-message {
+    background: #f1f1f1;
+    color: #333;
+    margin-right: auto;
+    border-bottom-left-radius: 5px;
+}
+
+/* Hover effect for the circular button */
+.chat-widget:not(.expanded):hover {
+    transform: scale(1.1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}

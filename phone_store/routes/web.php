@@ -22,6 +22,8 @@ use App\Http\Controllers\Admin\CategoryAdminController;
 use App\Http\Controllers\Admin\OrderAdminController;
 use App\Http\Controllers\Admin\PromotionController;
 use App\Http\Controllers\PromotionNotificationController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\BlogController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -32,10 +34,15 @@ use App\Http\Controllers\PromotionNotificationController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
+Route::post('/chat', [App\Http\Controllers\ChatController::class, 'chat']);
+Route::get('/chat', function () {
+    return view('chat');
+}); 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
+Route::get('/blog', [BlogController::class, 'index'])->name('blog');
+Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit'); 
 
 // Authentication routes
 Route::middleware('guest')->group(function () {
@@ -147,8 +154,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::delete('/promotions/{promotion}', [PromotionController::class, 'destroy'])->name('promotions.destroy');
     });
 
-   
-   
+    
+    // Route::get('/blog', [BlogController::class, 'index'])->name('blog');
+    // Route::get('/contact', [ContactController::class, 'index'])->name('contact');
+    
 
 });
 

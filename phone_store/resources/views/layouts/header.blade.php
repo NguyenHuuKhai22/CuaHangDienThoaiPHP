@@ -10,19 +10,19 @@
             <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="/">TRANG CHỦ</a>
+                        <a class="nav-link {{ request()->is('/') ? 'active' : '' }}" href="/">TRANG CHỦ</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/shop">CỬA HÀNG</a>
+                        <a class="nav-link {{ request()->is('shop*') ? 'active' : '' }}" href="/shop">CỬA HÀNG</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/blog">TIN TỨC</a>
+                        <a class="nav-link {{ request()->is('blog*') ? 'active' : '' }}" href="/blog">TIN TỨC</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/about">GIỚI THIỆU</a>
+                        <a class="nav-link {{ request()->is('about*') ? 'active' : '' }}" href="/about">GIỚI THIỆU</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/contact">LIÊN HỆ</a>
+                        <a class="nav-link {{ request()->is('contact*') ? 'active' : '' }}" href="/contact">LIÊN HỆ</a>
                     </li>
                 </ul>
             </div>
@@ -233,6 +233,76 @@ document.addEventListener('DOMContentLoaded', function() {
     background-color: #f8f9fa;
     font-weight: 600;
     padding: 0.75rem 1rem;
+}
+
+/* Enhanced Navigation link effects */
+.navbar-nav .nav-link {
+    position: relative;
+    color: #333;
+    padding: 0.5rem 1rem;
+    border-radius: 100px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: hidden;
+}
+
+.navbar-nav .nav-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, #333, #222);
+    z-index: -1;
+    transform: scale(0);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.navbar-nav .nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -2px;
+    left: 50%;
+    background-color: #fff;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform: translateX(-50%);
+}
+
+.navbar-nav .nav-link:hover {
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.navbar-nav .nav-link:hover::before {
+    transform: scale(1);
+}
+
+.navbar-nav .nav-link:hover::after {
+    width: 80%;
+}
+
+/* Active link style */
+.navbar-nav .nav-link.active {
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.navbar-nav .nav-link.active::before {
+    transform: scale(1);
+}
+
+.navbar-nav .nav-link.active::after {
+    width: 80%;
+}
+
+/* Add subtle shadow on hover and active */
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 </style>
 @endpush

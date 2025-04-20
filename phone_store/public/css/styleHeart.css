@@ -5,16 +5,78 @@
     
     .product-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-    }
-    
-    .product-overlay {
-        background: rgba(255,255,255,0.9);
-        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
     
     .product-card:hover .product-overlay {
         opacity: 1 !important;
+        backdrop-filter: blur(2px);
+        background: rgba(255, 255, 255, 0.9);
+    }
+    
+    /* Product action buttons */
+    .product-overlay .btn {
+        width: 40px;
+        height: 40px;
+        padding: 0 !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    
+    .product-card:hover .product-overlay .btn {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    
+    .product-overlay .btn:nth-child(1) {
+        transition-delay: 0.1s;
+    }
+    
+    .product-overlay .btn:nth-child(2) {
+        transition-delay: 0.2s;
+    }
+    
+    .product-overlay .btn:nth-child(3) {
+        transition-delay: 0.3s;
+    }
+    
+    .product-overlay .btn i {
+        font-size: 18px;
+    }
+    
+    .product-overlay .btn-dark {
+        background: #333;
+        border: none;
+    }
+    
+    .product-overlay .btn-dark:hover {
+        background: #000;
+        transform: scale(1.1);
+    }
+    
+    .product-overlay .btn-outline-dark {
+        background: transparent;
+        border: 2px solid #333;
+        color: #333;
+    }
+    
+    .product-overlay .btn-outline-dark:hover {
+        background: #333;
+        color: #fff;
+        transform: scale(1.1);
+    }
+    
+    /* Product image container */
+    .product-card .card-img-top {
+        transition: all 0.3s ease;
+    }
+    
+    .product-card:hover .card-img-top {
+        filter: blur(1px);
     }
     
     .object-fit-cover {

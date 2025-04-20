@@ -6,7 +6,7 @@
 <!-- Hero Section -->
 <section class="hero-section position-relative vh-100">
     <div class="hero-background position-absolute w-100 h-100">
-        <img src="{{ asset('images/hero-phone.png') }}" alt="Store Background" class="w-100 h-100 object-fit-cover">
+        <img src="{{ asset('images/hero-phone.png') }}" alt="Store Background" class="w-100 h-100 object-fit-cover" loading="eager">
         <div class="overlay position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(to right, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 100%);"></div>
     </div>
     
@@ -34,9 +34,9 @@
 
 
 <!-- Categories Section -->
-<section class="categories-section py-5">
+<section class="categories-section py-5 reveal-section">
     <div class="container position-relative">
-        <h2 class="display-6 text-center mb-5" style="font-family: 'Marcellus', serif;">Danh Mục Sản Phẩm</h2>
+        <h2 class="display-6 text-center mb-5 reveal-item" style="font-family: 'Marcellus', serif;">Danh Mục Sản Phẩm</h2>
 
         <div class="swiper categories-slider">
             <div class="swiper-wrapper">
@@ -47,7 +47,9 @@
                             <div class="category-image">
                                 <img src="{{ $category->image ? asset('images/categories/' . $category->image) : asset('images/placeholder.jpg') }}" 
                                      alt="{{ $category->name }}" 
-                                     class="w-100 h-100 object-fit-cover">
+                                     class="w-100 h-100 object-fit-cover"
+                                     loading="lazy"
+                                     decoding="async">
                                 <div class="category-overlay">
                                     <h3 class="h4 mb-3 text-white">{{ $category->name }}</h3>
                                     <span class="view-more">
@@ -78,22 +80,24 @@
 
 
 <!-- Featured Products -->
-<section class="py-5 bg-light" id="featured-products">
+<section class="py-5 bg-light reveal-section" id="featured-products">
     <div class="container">
         <div class="row mb-5">
-            <div class="col-12 text-center">
-            <h2 class="mb-4" style="font-family: 'Marcellus', serif;">Sản Phẩm Nổi Bật</h2>
-            <p class="text-muted">Khám phá những mẫu điện thoại thông minh cao cấp của chúng tôi</p>
+            <div class="col-12 text-center reveal-item">
+                <h2 class="mb-4" style="font-family: 'Marcellus', serif;">Sản Phẩm Nổi Bật</h2>
+                <p class="text-muted">Khám phá những mẫu điện thoại thông minh cao cấp của chúng tôi</p>
             </div>
         </div>
         <div class="row g-4">
             @foreach($latestProducts as $product)
-            <div class="col-md-3">
+            <div class="col-md-3 reveal-item delay-{{ $loop->index }}">
                 <div class="card h-100 border-0 product-card">
                     <div class="position-relative">
                         <img src="{{ $product->image ? asset('images/products/' . $product->image) : asset('images/placeholder.jpg') }}" 
                              class="card-img-top" alt="{{ $product->name }}"
-                             style="height: 300px; object-fit: cover;">
+                             style="height: 300px; object-fit: cover;"
+                             loading="lazy"
+                             decoding="async">
                         <div class="product-overlay position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center gap-2 opacity-0">
                             @auth
                                 <button class="btn btn-sm btn-dark rounded-circle p-2 add-to-cart" 
@@ -150,22 +154,24 @@
 
 
 <!-- New Arrivals -->
-<section class="py-5 bg-light">
+<section class="py-5 bg-light reveal-section">
     <div class="container">
         <div class="row mb-5">
-            <div class="col-12 text-center">
+            <div class="col-12 text-center reveal-item">
                 <h2 class="mb-4" style="font-family: 'Marcellus', serif;">Hàng Mới Về</h2>
                 <p class="text-muted">Khám phá những mẫu điện thoại mới nhất của chúng tôi</p>
             </div>
         </div>
         <div class="row g-4">
             @foreach($latestProducts->take(3) as $product)
-            <div class="col-md-4">
+            <div class="col-md-4 reveal-item delay-{{ $loop->index }}">
                 <div class="card h-100 border-0">
                     <div class="position-relative" style="height: 340px;">
                         <img src="{{ $product->image ? asset('images/products/' . $product->image) : asset('images/placeholder.jpg') }}" 
                              class="w-100 h-100 object-fit-cover" 
-                             alt="{{ $product->name }}">
+                             alt="{{ $product->name }}"
+                             loading="lazy"
+                             decoding="async">
                     </div>
                     <div class="card-body px-0">
                         <div class="d-flex justify-content-between align-items-center mb-2">
@@ -183,14 +189,17 @@
     </div>
 </section>
 
-@push('styles')
-
+<!-- @push('styles')
+<link rel="stylesheet" href="{{asset('css/IntersectionObserver.css')}}">
 <link rel="stylesheet" href="{{ asset('css/home.css')}}">
 <link rel="stylesheet" href="{{ asset('css/styleHeart.css') }}">
-@endpush
+
+
+@endpush -->
 
 @push('scripts')
 <script src="{{ asset('js/cart.js') }}"></script>
 <script src="{{ asset('js/wishlisthome.js') }}"></script>
+<script src="{{ asset('js/home.js') }}"></script>
 @endpush
 @endsection 
