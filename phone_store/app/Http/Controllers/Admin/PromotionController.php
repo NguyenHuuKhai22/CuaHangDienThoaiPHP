@@ -8,6 +8,11 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use App\Events\PromotionEvent;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Event;
+use App\Models\Notification;
+use App\Models\User;
 
 class PromotionController extends Controller
 {
@@ -124,18 +129,44 @@ class PromotionController extends Controller
                 'is_active' => true
             ]);
 
+            // Log tạo khuyến mãi
+            Log::info('Created new promotion', [
+                'promotion_id' => $promotion->id,
+                'name' => $promotion->name
+            ]);
+
             // Lấy danh sách sản phẩm và tạo liên kết
             $products = Product::whereIn('id', $request->products)->get();
             $promotion->products()->attach($request->products);
             
             // Cập nhật giá khuyến mãi cho sản phẩm
             $this->updateProductDiscounts($products, $promotion);
+
+            // Tạo thông báo cho tất cả người dùng
+            $users = User::where('role', '!=', 'admin')->get();
+            foreach ($users as $user) {
+                $user->notifications()->create([
+                    'type' => 'promotion',
+                    'data' => json_encode([
+                        'title' => 'Khuyến mãi mới',
+                        'content' => "Khuyến mãi {$promotion->name} đã được tạo. Giảm giá {$promotion->discount_value}" . 
+                                   ($promotion->discount_type == 'percentage' ? '%' : ' VNĐ'),
+                        'promotion_id' => $promotion->id,
+                        'start_date' => $promotion->start_date,
+                        'end_date' => $promotion->end_date
+                    ])
+                ]);
+            }
             
             DB::commit();
             return redirect()->route('admin.promotions.index')
                 ->with('success', 'Khuyến mãi đã được tạo thành công.');
         } catch (\Exception $e) {
             DB::rollback();
+            Log::error('Failed to create promotion', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
             return back()->with('error', 'Có lỗi xảy ra khi tạo khuyến mãi: ' . $e->getMessage());
         }
     }
@@ -261,6 +292,11 @@ class PromotionController extends Controller
 
         DB::beginTransaction();
         try {
+            // Log bắt đầu cập nhật
+            Log::info('Starting promotion update', [
+                'promotion_id' => $promotion->id
+            ]);
+
             // Lấy danh sách sản phẩm cũ để cập nhật lại giá
             $oldProducts = $promotion->products()->get();
 
@@ -274,6 +310,11 @@ class PromotionController extends Controller
                 'end_date' => Carbon::parse($request->end_date)
             ]);
 
+            // Log cập nhật thông tin
+            Log::info('Updated promotion details', [
+                'promotion_id' => $promotion->id
+            ]);
+
             // Cập nhật lại giá cho sản phẩm cũ
             $this->updateProductDiscounts($oldProducts);
 
@@ -283,12 +324,32 @@ class PromotionController extends Controller
             // Cập nhật giá khuyến mãi cho sản phẩm mới
             $newProducts = Product::whereIn('id', $request->products)->get();
             $this->updateProductDiscounts($newProducts, $promotion);
+
+            // Tạo thông báo cập nhật cho tất cả người dùng
+            $users = User::where('role', '!=', 'admin')->get();
+            foreach ($users as $user) {
+                $user->notifications()->create([
+                    'type' => 'promotion',
+                    'data' => json_encode([
+                        'title' => 'Cập nhật khuyến mãi',
+                        'content' => "Khuyến mãi {$promotion->name} đã được cập nhật. Giảm giá {$promotion->discount_value}" . 
+                                   ($promotion->discount_type == 'percentage' ? '%' : ' VNĐ'),
+                        'promotion_id' => $promotion->id,
+                        'start_date' => $promotion->start_date,
+                        'end_date' => $promotion->end_date
+                    ])
+                ]);
+            }
             
             DB::commit();
             return redirect()->route('admin.promotions.index')
                 ->with('success', 'Khuyến mãi đã được cập nhật thành công.');
         } catch (\Exception $e) {
             DB::rollback();
+            Log::error('Failed to update promotion', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
             return back()->with('error', 'Có lỗi xảy ra khi cập nhật khuyến mãi: ' . $e->getMessage());
         }
     }

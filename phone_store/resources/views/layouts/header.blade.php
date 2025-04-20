@@ -131,108 +131,294 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    const notificationDropdown = document.querySelector('.notification-dropdown');
+    const notificationBadge = document.querySelector('.notification-badge');
+    const notificationContainer = document.querySelector('.notifications-container');
+
+    // Khởi tạo dropdown của Bootstrap
+    new bootstrap.Dropdown(notificationDropdown.querySelector('[data-bs-toggle="dropdown"]'));
+
     function checkNotifications() {
         fetch('/check-promotions')
             .then(response => response.json())
             .then(data => {
-                const container = document.querySelector('.notifications-container');
-                const badge = document.querySelector('.notification-badge');
-                let notificationCount = 0;
+                console.log('Notification data:', data); // Debug log
                 
-                // Clear existing notifications
-                container.innerHTML = '';
+                notificationContainer.innerHTML = '';
                 
                 // Add upcoming promotions
-                data.upcoming.forEach(promotion => {
-                    notificationCount++;
-                    const item = document.createElement('a');
-                    item.href = '#';
-                    item.className = 'dropdown-item notification-item';
-                    item.innerHTML = `
-                        <div class="d-flex align-items-center">
-                            <div class="flex-grow-1">
-                                <p class="mb-1">${promotion.message}</p>
-                                ${promotion.minutes_until_start ? 
-                                    `<small class="text-muted">Còn ${promotion.minutes_until_start} phút</small>` : 
-                                    ''}
+                if (data.upcoming && data.upcoming.length > 0) {
+                    data.upcoming.forEach(promotion => {
+                        const notificationData = JSON.parse(promotion.data);
+                        const item = document.createElement('a');
+                        item.href = `/shop?promotion_id=${notificationData.promotion_id}`;
+                        item.className = 'dropdown-item notification-item';
+                        item.dataset.promotionId = notificationData.promotion_id;
+                        
+                        // Kiểm tra nếu thông báo đã đọc
+                        if (promotion.read_at) {
+                            item.classList.add('read');
+                        }
+                        
+                        item.innerHTML = `
+                            <div class="d-flex align-items-center">
+                                <div class="flex-grow-1">
+                                    <p class="mb-1">${notificationData.content}</p>
+                                    ${promotion.minutes_until_start ? 
+                                        `<small class="text-muted">Còn ${promotion.minutes_until_start} phút</small>` : 
+                                        ''}
+                                </div>
                             </div>
-                        </div>
-                    `;
-                    container.appendChild(item);
-                });
+                        `;
+                        notificationContainer.appendChild(item);
+                    });
+                }
                 
                 // Add started promotions
-                data.started.forEach(promotion => {
-                    notificationCount++;
-                    const item = document.createElement('a');
-                    item.href = '#';
-                    item.className = 'dropdown-item notification-item';
-                    item.innerHTML = `
-                        <div class="d-flex align-items-center">
-                            <div class="flex-grow-1">
-                                <p class="mb-1">${promotion.message}</p>
-                                <small class="text-muted">Vừa bắt đầu</small>
+                if (data.started && data.started.length > 0) {
+                    data.started.forEach(promotion => {
+                        const notificationData = JSON.parse(promotion.data);
+                        const item = document.createElement('a');
+                        item.href = `/shop?promotion_id=${notificationData.promotion_id}`;
+                        item.className = 'dropdown-item notification-item';
+                        item.dataset.promotionId = notificationData.promotion_id;
+                        
+                        // Kiểm tra nếu thông báo đã đọc
+                        if (promotion.read_at) {
+                            item.classList.add('read');
+                        }
+                        
+                        item.innerHTML = `
+                            <div class="d-flex align-items-center">
+                                <div class="flex-grow-1">
+                                    <p class="mb-1">${notificationData.content}</p>
+                                    <small class="text-muted">Vừa bắt đầu</small>
+                                </div>
                             </div>
-                        </div>
-                    `;
-                    container.appendChild(item);
-                });
-                
-                // Update badge
-                if (notificationCount > 0) {
-                    badge.style.display = 'block';
-                    badge.textContent = notificationCount;
-                } else {
-                    badge.style.display = 'none';
+                        `;
+                        notificationContainer.appendChild(item);
+                    });
                 }
                 
-                // If no notifications
-                if (notificationCount === 0) {
+                // Update badge - hiển thị tổng số thông báo chưa đọc
+                if (data.total > 0) {
+                    notificationBadge.style.display = 'block';
+                    notificationBadge.textContent = data.total;
+                } else {
+                    notificationBadge.style.display = 'none';
+                }
+                
+                // If no notifications at all
+                if (data.upcoming.length === 0 && data.started.length === 0) {
                     const emptyMessage = document.createElement('div');
                     emptyMessage.className = 'dropdown-item text-center text-muted';
-                    emptyMessage.textContent = 'Không có thông báo mới';
-                    container.appendChild(emptyMessage);
+                    emptyMessage.textContent = 'Không có thông báo nào';
+                    notificationContainer.appendChild(emptyMessage);
                 }
             })
-            .catch(error => console.error('Error checking notifications:', error));
+            .catch(error => {
+                console.error('Error checking notifications:', error);
+                notificationContainer.innerHTML = `
+                    <div class="dropdown-item text-center text-danger">
+                        Có lỗi xảy ra khi tải thông báo
+                    </div>
+                `;
+            });
     }
 
-    // Check notifications every minute
+    // Check notifications immediately and every minute
     checkNotifications();
     setInterval(checkNotifications, 60000);
+
+    // Mark notification as read when clicked
+    notificationContainer.addEventListener('click', function(e) {
+        const item = e.target.closest('.notification-item');
+        if (item) {
+            const promotionId = item.dataset.promotionId;
+            if (promotionId) {
+                e.preventDefault(); // Chặn hành vi chuyển trang mặc định
+                
+                // Đánh dấu visual là đã đọc ngay lập tức
+                item.classList.add('read');
+                
+                // Cập nhật số lượng thông báo (giảm đi 1)
+                const currentCount = parseInt(notificationBadge.textContent);
+                if (currentCount > 1) {
+                    notificationBadge.textContent = currentCount - 1;
+                } else {
+                    notificationBadge.style.display = 'none';
+                }
+                
+                // Lưu URL đích để chuyển hướng sau
+                const targetUrl = item.getAttribute('href');
+                
+                // Lấy CSRF token từ meta tag
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+                
+                // Gửi request và đợi hoàn thành trước khi chuyển trang
+                fetch('/notifications/mark-as-read', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({
+                        promotion_id: promotionId
+                    }),
+                    credentials: 'same-origin' // Đảm bảo gửi cookies, bao gồm session
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Mark as read success:', data);
+                    // Chuyển hướng đến trang đích sau khi request hoàn thành
+                    window.location.href = targetUrl;
+                })
+                .catch(error => {
+                    console.error('Error marking notification as read:', error);
+                    // Vẫn chuyển hướng nếu có lỗi
+                    window.location.href = targetUrl;
+                });
+            }
+        }
+    });
 });
 </script>
 
 <style>
+/* Notification Dropdown Styles */
 .notification-dropdown .dropdown-menu {
     padding: 0;
-    margin-top: 0.5rem;
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    margin-top: 0.75rem;
+    box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.15);
+    min-width: 400px;
+    border: none;
+    border-radius: 8px;
+}
+
+.notification-dropdown .dropdown-header {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
+    color: #1a1a1a;
+    font-size: 0.95rem;
+    border-radius: 8px 8px 0 0;
+}
+
+.notifications-container {
+    max-height: 360px;
+    overflow-y: auto;
+    padding: 0.5rem 0;
+}
+
+.notifications-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.notifications-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.notifications-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
 }
 
 .notification-item {
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid #e9ecef;
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: block;
+    text-decoration: none;
+}
+
+.notification-item:last-child {
+    border-bottom: none;
 }
 
 .notification-item:hover {
+    background-color: #f8f9fa;
+    transform: translateY(-1px);
+}
+
+.notification-item.read {
+    opacity: 0.7;
     background-color: #f8f9fa;
 }
 
 .notification-item p {
     margin: 0;
-    font-size: 0.875rem;
+    font-size: 0.9rem;
     color: #333;
+    line-height: 1.4;
 }
 
 .notification-item small {
     font-size: 0.75rem;
+    color: #6c757d;
+    display: block;
+    margin-top: 0.25rem;
 }
 
-.dropdown-header {
-    background-color: #f8f9fa;
-    font-weight: 600;
-    padding: 0.75rem 1rem;
+.notification-badge {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+    background-color: #dc3545;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.1);
+}
+
+.dropdown-divider {
+    margin: 0;
+    border-top: 1px solid #eee;
+}
+
+.dropdown-item.text-center {
+    padding: 0.75rem;
+    color: #6c757d;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.dropdown-item.text-center:hover {
+    color: #0d6efd;
+}
+
+.text-danger {
+    padding: 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+/* Animation for new notifications */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.notification-item {
+    animation: fadeIn 0.3s ease forwards;
+}
+
+/* Hover effect for notification icon */
+.notification-dropdown > a {
+    transition: transform 0.2s ease;
+}
+
+.notification-dropdown > a:hover {
+    transform: scale(1.1);
+}
+
+.notification-dropdown > a:active {
+    transform: scale(0.95);
 }
 
 /* Enhanced Navigation link effects */

@@ -88,6 +88,14 @@ class User extends Authenticatable implements CanResetPasswordContract
     }
 
     /**
+     * Get all notifications for the user
+     */
+    public function notifications()
+    {
+        return $this->morphMany(Notification::class, 'notifiable')->orderBy('created_at', 'desc');
+    }
+
+    /**
      * Get the email address where password reset links are sent.
      */
     public function getEmailForPasswordReset()
@@ -110,4 +118,6 @@ class User extends Authenticatable implements CanResetPasswordContract
     {
         return $this->is_blocked;
     }
+
+    
 }

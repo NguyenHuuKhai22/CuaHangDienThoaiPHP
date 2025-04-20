@@ -55,6 +55,38 @@
                         Trên 30 triệu
                     </a>
                 </div>
+
+                <!-- Thêm phần khuyến mãi -->
+                <h5 class="mb-3 mt-4">Khuyến mãi đang diễn ra</h5>
+                <div class="list-group list-group-flush promotion-list">
+                    @forelse($activePromotions ?? [] as $promotion)
+                        <a href="{{ route('shop.index', ['promotion_id' => $promotion->id]) }}" 
+                           class="list-group-item list-group-item-action promotion-item d-flex flex-column gap-1 {{ request('promotion_id') == $promotion->id ? 'active' : '' }}">
+                            <div class="d-flex align-items-center">
+                                <span class="promotion-badge me-2">
+                                    <i class="bi bi-tag-fill"></i>
+                                </span>
+                                <strong>{{ $promotion->name }}</strong>
+                            </div>
+                            <div class="small text-muted">
+                                @if($promotion->discount_type == 'percentage')
+                                    Giảm {{ number_format($promotion->discount_value) }}%
+                                @else
+                                    Giảm {{ number_format($promotion->discount_value) }}đ
+                                @endif
+                            </div>
+                            <div class="promotion-time small">
+                                <i class="bi bi-clock me-1"></i>
+                                Còn {{ \Carbon\Carbon::parse($promotion->end_date)->diffForHumans() }}
+                            </div>
+                        </a>
+                    @empty
+                        <div class="text-muted small p-3 text-center">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Không có khuyến mãi nào đang diễn ra
+                        </div>
+                    @endforelse
+                </div>
             </div>
         </div>
 

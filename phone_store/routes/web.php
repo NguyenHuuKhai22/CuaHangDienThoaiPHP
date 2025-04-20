@@ -24,6 +24,7 @@ use App\Http\Controllers\Admin\PromotionController;
 use App\Http\Controllers\PromotionNotificationController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\NotificationController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -84,6 +85,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/payment/ipn/{method}', [PaymentController::class, 'handleIPN'])->name('payment.ipn');
     Route::get('/payment/success', [PaymentController::class, 'success'])->name('payment.success');
     Route::get('/payment/failed', [PaymentController::class, 'failed'])->name('payment.failed');
+    
+    
 });
 
 // Products routes
@@ -104,6 +107,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
     Route::put('/orders/{id}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
+    
 });
 
 Route::get('/categories/{category}', [CategoryController::class, 'show'])->name('categories.show');
@@ -159,6 +163,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Route::get('/contact', [ContactController::class, 'index'])->name('contact');
     
 
+});
+
+Route::get('/check-promotions', [NotificationController::class, 'checkPromotions'])->name('check.promotions');
+Route::post('/notifications/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+
+// Notification routes
+Route::middleware('auth')->group(function () {
+    Route::get('/check-promotions', [App\Http\Controllers\NotificationController::class, 'checkPromotions']);
+    Route::post('/notifications/mark-as-read', [App\Http\Controllers\NotificationController::class, 'markAsRead']);
 });
 
 
