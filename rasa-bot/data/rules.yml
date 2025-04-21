@@ -1,0 +1,67 @@
+version: "3.1"
+
+rules:
+- rule: Chào hỏi
+  steps:
+  - intent: greet
+  - action: utter_greet
+
+- rule: Tạm biệt
+  steps:
+  - intent: goodbye
+  - action: utter_goodbye
+
+- rule: Hỏi giá
+  steps:
+  - intent: ask_price
+  - action: utter_ask_price
+
+- rule: Hỏi sản phẩm
+  steps:
+  - intent: ask_product
+  - action: utter_ask_product
+
+- rule: Hỏi thông số
+  steps:
+  - intent: ask_specs
+  - action: utter_ask_specs
+
+- rule: Hỏi giảm giá
+  steps:
+  - intent: ask_discount
+  - action: utter_ask_discount
+
+- rule: Hỏi tình trạng hàng
+  steps:
+  - intent: ask_stock
+  - action: utter_ask_stock
+
+- rule: Hỏi đặt hàng
+  steps:
+  - intent: ask_order
+  - action: utter_ask_order
+
+- rule: Hỏi giao hàng
+  steps:
+  - intent: ask_delivery
+  - action: utter_ask_delivery
+
+- rule: Hỏi đổi trả
+  steps:
+  - intent: ask_return
+  - action: utter_ask_return
+
+- rule: Hỏi bảo hành
+  steps:
+  - intent: ask_warranty
+  - action: utter_ask_warranty
+
+- rule: Hỏi liên hệ
+  steps:
+  - intent: ask_contact
+  - action: utter_ask_contact
+
+- rule: Hỏi khuyến mãi
+  steps:
+  - intent: ask_promotions
+  - action: utter_ask_promotions 

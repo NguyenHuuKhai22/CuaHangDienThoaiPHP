@@ -29,7 +29,7 @@
 <link rel="stylesheet" href="{{asset('css/IntersectionObserver.css')}}">
 <link rel="stylesheet" href="{{ asset('css/home.css')}}">
 <link rel="stylesheet" href="{{ asset('css/styleHeart.css') }}">
-
+<link rel="stylesheet" href="{{ asset('css/notification.css') }}">
 
 
     @stack('styles')
@@ -64,7 +64,7 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-   
+    <script src="{{ asset('js/notification.js') }}"></script>
     <!-- Swiper JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
     <!-- toastr -->
@@ -83,7 +83,7 @@
                 messageInput.value = '';
                 
                 // Send to server
-                fetch('/chat', {
+                fetch('{{ route("chat") }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -97,6 +97,7 @@
                 })
                 .catch(error => {
                     console.error('Error:', error);
+                    addMessage('bot', 'Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại sau.');
                 });
             }
         }

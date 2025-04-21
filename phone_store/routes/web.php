@@ -35,7 +35,7 @@ use App\Http\Controllers\NotificationController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::post('/chat', [App\Http\Controllers\ChatController::class, 'chat']);
+Route::post('/chat', [App\Http\Controllers\ChatController::class, 'chat'])->name('chat');
 Route::get('/chat', function () {
     return view('chat');
 }); 

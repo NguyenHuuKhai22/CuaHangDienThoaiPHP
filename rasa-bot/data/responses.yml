@@ -1,0 +1,61 @@
+version: "3.1"
+
+responses:
+  utter_greet:
+    - text: "Xin chào! Tôi có thể giúp gì cho bạn?"
+    - text: "Chào bạn! Bạn cần tìm hiểu thông tin gì?"
+    - text: "Hi! Tôi là trợ lý của cửa hàng điện thoại. Bạn cần gì?"
+
+  utter_goodbye:
+    - text: "Tạm biệt! Hẹn gặp lại bạn!"
+    - text: "Cảm ơn bạn đã ghé thăm! Chúc bạn một ngày tốt lành!"
+    - text: "Hẹn gặp lại bạn lần sau!"
+
+  utter_thank:
+    - text: "Không có gì! Rất vui được giúp bạn."
+    - text: "Rất hân hạnh được phục vụ bạn!"
+    - text: "Cảm ơn bạn đã tin tưởng chúng tôi!"
+
+  utter_ask_price:
+    - text: "Đây là bảng giá các sản phẩm của chúng tôi:\n- iPhone 16 Pro Max: 34.990.000đ (giảm còn 30.791.200đ)\n- Samsung Galaxy S24 Ultra: 32.990.000đ (giảm còn 29.031.200đ)\n- Xiaomi 14 Pro: 24.990.000đ\n- OPPO Find X7 Ultra: 29.990.000đ (giảm còn 26.691.100đ)\n- Vivo X100 Pro: 24.990.000đ\n- iPhone 14 Pro: 27.990.000đ\n- iPhone 13 Pro: 19.990.000đ (giảm còn 17.990.000đ)\n- Samsung Galaxy Z Flip5: 24.990.000đ\n- Samsung Galaxy A54: 9.990.000đ\n- Xiaomi Redmi Note 13: 6.490.000đ\n- Xiaomi 13T: 12.990.000đ\n- OPPO Reno10 5G: 10.490.000đ\n- OPPO A78: 6.290.000đ\n- Vivo V27e: 8.490.000đ (giảm còn 7.990.000đ)\n- Vivo Y17s: 3.990.000đ"
+    - text: "Bạn muốn biết giá của sản phẩm nào? Tôi sẽ cung cấp thông tin chi tiết cho bạn."
+
+  utter_ask_product:
+    - text: "Chúng tôi có các dòng điện thoại:\n1. iPhone:\n   - iPhone 16 Pro Max (Desert Titanium, White Titanium, Black Titanium, Natural Titanium)\n   - iPhone 14 Pro\n   - iPhone 13 Pro\n2. Samsung:\n   - Galaxy S24 Ultra (Titanium Black, Titanium Gray)\n   - Galaxy Z Flip5\n   - Galaxy A54\n3. Xiaomi:\n   - 14 Pro\n   - 13T\n   - Redmi Note 13\n4. OPPO:\n   - Find X7 Ultra\n   - Reno10 5G\n   - A78\n5. Vivo:\n   - X100 Pro\n   - V27e\n   - Y17s"
+    - text: "Cửa hàng chúng tôi phân phối đa dạng các sản phẩm từ 5 hãng điện thoại lớn. Bạn quan tâm đến hãng nào?"
+
+  utter_ask_specs:
+    - text: "Thông số kỹ thuật của sản phẩm:\n- iPhone 16 Pro Max:\n  + RAM: 16GB\n  + Bộ nhớ: 256GB\n  + Màn hình: 6.7 inch\n  + Pin: 4422 mAh\n  + Hệ điều hành: iOS 17\n  + Màu: Desert Titanium, White Titanium, Black Titanium, Natural Titanium\n- Samsung Galaxy S24 Ultra:\n  + RAM: 12GB\n  + Bộ nhớ: 256GB\n  + Màn hình: 6.8 inch\n  + Pin: 5000 mAh\n  + Hệ điều hành: Android 14\n  + Màu: Titanium Black, Titanium Gray\n- Xiaomi 14 Pro:\n  + RAM: 12GB\n  + Bộ nhớ: 256GB\n  + Màn hình: 6.73 inch\n  + Pin: 4880 mAh\n  + Hệ điều hành: Android 14\n  + Màu: Black"
+    - text: "Bạn muốn biết thông số kỹ thuật của sản phẩm nào? Tôi sẽ cung cấp thông tin chi tiết cho bạn."
+
+  utter_ask_discount:
+    - text: "Hiện tại chúng tôi có các chương trình giảm giá:\n- iPhone 16 Pro Max: Giảm 12% (34.990.000đ -> 30.791.200đ)\n- Samsung Galaxy S24 Ultra: Giảm 12% (32.990.000đ -> 29.031.200đ)\n- OPPO Find X7 Ultra: Giảm 11% (29.990.000đ -> 26.691.100đ)\n- iPhone 13 Pro: Giảm 10% (19.990.000đ -> 17.990.000đ)\n- Vivo V27e: Giảm 6% (8.490.000đ -> 7.990.000đ)"
+    - text: "Chúng tôi đang có nhiều chương trình giảm giá hấp dẫn. Bạn quan tâm đến sản phẩm nào?"
+
+  utter_ask_stock:
+    - text: "Tình trạng hàng hóa hiện tại:\n- iPhone 16 Pro Max: Còn 50 máy\n- Samsung Galaxy S24 Ultra: Còn 40 máy\n- Xiaomi 14 Pro: Còn 30 máy\n- OPPO Find X7 Ultra: Còn 35 máy\n- Vivo X100 Pro: Còn 25 máy\n- iPhone 14 Pro: Còn 40 máy\n- iPhone 13 Pro: Còn 35 máy\n- Samsung Galaxy Z Flip5: Còn 25 máy\n- Samsung Galaxy A54: Còn 52 máy\n- Xiaomi Redmi Note 13: Còn 57 máy\n- Xiaomi 13T: Còn 40 máy\n- OPPO Reno10 5G: Còn 50 máy\n- OPPO A78: Còn 60 máy\n- Vivo V27e: Còn 45 máy\n- Vivo Y17s: Còn 80 máy"
+    - text: "Bạn muốn biết tình trạng hàng của sản phẩm nào? Tôi sẽ kiểm tra giúp bạn."
+
+  utter_ask_order:
+    - text: "Để đặt hàng, bạn có thể:\n1. Đặt trực tiếp trên website\n2. Gọi hotline: 1900xxxx\n3. Đến cửa hàng gần nhất\nChúng tôi hỗ trợ nhiều phương thức thanh toán như COD, Momo và VNPay."
+    - text: "Bạn có thể đặt hàng online qua website hoặc đến trực tiếp cửa hàng. Chúng tôi hỗ trợ giao hàng toàn quốc."
+
+  utter_ask_delivery:
+    - text: "Thời gian giao hàng thông thường từ 2-3 ngày làm việc. Với đơn hàng nội thành có thể nhận trong ngày. Phí ship tùy thuộc vào khoảng cách và phương thức vận chuyển."
+    - text: "Chúng tôi cam kết giao hàng nhanh chóng và an toàn. Bạn có thể theo dõi đơn hàng qua website hoặc liên hệ hotline."
+
+  utter_ask_return:
+    - text: "Chính sách đổi trả của chúng tôi:\n- Đổi trả trong 30 ngày\n- Sản phẩm còn nguyên vẹn\n- Có hóa đơn mua hàng\n- Không áp dụng với sản phẩm đã kích hoạt bảo hành"
+    - text: "Chúng tôi có chính sách đổi trả linh hoạt trong vòng 30 ngày. Bạn cần giữ hóa đơn và đảm bảo sản phẩm còn nguyên vẹn."
+
+  utter_ask_warranty:
+    - text: "Chính sách bảo hành của chúng tôi:\n- Bảo hành 12 tháng chính hãng\n- Hỗ trợ kỹ thuật 24/7\n- Bảo hành toàn quốc\n- Miễn phí vận chuyển bảo hành"
+    - text: "Chúng tôi cam kết bảo hành chính hãng 12 tháng cho tất cả sản phẩm. Bạn có thể liên hệ hotline để được hỗ trợ."
+
+  utter_ask_contact:
+    - text: "Thông tin liên hệ:\n- Hotline: 1900xxxx\n- Email: support@example.com\n- Địa chỉ: 123 Đường ABC, Quận XYZ\n- Giờ làm việc: 8:00 - 22:00 hàng ngày"
+    - text: "Bạn có thể liên hệ với chúng tôi qua nhiều kênh. Chúng tôi luôn sẵn sàng hỗ trợ 24/7."
+
+  utter_default:
+    - text: "Xin lỗi, tôi không hiểu câu hỏi của bạn. Bạn có thể hỏi về: sản phẩm, giá cả, đặt hàng, giao hàng, đổi trả, khuyến mãi hoặc chính sách."
+    - text: "Tôi chưa hiểu rõ câu hỏi của bạn. Bạn có thể hỏi về các thông tin sản phẩm hoặc dịch vụ của chúng tôi." 

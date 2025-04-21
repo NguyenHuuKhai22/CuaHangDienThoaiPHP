@@ -1,0 +1,10 @@
+{
+  "0": "ask_delivery",
+  "1": "ask_order",
+  "2": "ask_price",
+  "3": "ask_product",
+  "4": "ask_return",
+  "5": "goodbye",
+  "6": "greet",
+  "7": "thank"
+}

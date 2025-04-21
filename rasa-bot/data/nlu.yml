@@ -1,0 +1,219 @@
+version: "3.1"
+
+nlu:
+- intent: greet
+  examples: |
+    - xin chào
+    - chào
+    - chào ?
+    - chào?
+    - chào!
+    - chào bạn
+    - chào cậu
+    - xin chào!
+    - hi
+    - hello
+    - chào buổi sáng
+    - chào buổi chiều
+    - chào buổi tối
+    - chào shop
+    - chào cửa hàng
+    - chào nhân viên
+
+
+- intent: ask_promotions
+  examples: |
+    - có chương trình khuyến mãi gì
+    - đang có khuyến mãi gì
+    - có ưu đãi gì không
+    - có chương trình gì không
+    - có giảm giá gì không
+    - có quà tặng gì không
+    - có tặng phụ kiện không
+    - có giảm giá cho đơn hàng lớn không
+    - có ưu đãi cho khách hàng thân thiết không
+    - có chương trình trả góp không
+    - có tặng kèm gì không
+    - có voucher giảm giá không
+    - có mã giảm giá không
+    - có coupon không
+    - có ưu đãi đặc biệt không
+- intent: goodbye
+  examples: |
+    - tạm biệt
+    - bye
+    - hẹn gặp lại
+    - chào tạm biệt
+    - tạm biệt nhé
+    - cảm ơn
+    - cám ơn
+    - thanks
+    - thank you
+
+- intent: ask_price
+  examples: |
+    - giá [iPhone 16 Pro Max](product)
+    - [iPhone 16 Pro Max](product) giá
+    - [iPhone 16 Pro Max](product) bao nhiêu
+    - cho hỏi giá [iPhone 16 Pro Max](product)
+    - [iPhone 16 Pro Max](product) giá bao nhiêu
+    - giá [iPhone 16 Pro Max](product) là bao nhiêu
+    - [iPhone 16 Pro Max](product) có giá bao nhiêu
+    - [iPhone 16 Pro Max](product) bao nhiêu tiền
+    - giá tiền [iPhone 16 Pro Max](product)
+    - [Samsung Galaxy S24 Ultra](product) giá bao nhiêu
+    - [Xiaomi 14 Pro](product) có giá bao nhiêu
+    - [OPPO Find X7 Ultra](product) giá thế nào
+    - [Vivo X100 Pro](product) bao nhiêu tiền
+    - giá [iPhone 14 Pro](product)
+    - [iPhone 13 Pro](product) giá bao nhiêu
+    - [Samsung Galaxy Z Flip5](product) giá thế nào
+    - [Samsung Galaxy A54](product) bao nhiêu tiền
+    - [Xiaomi Redmi Note 13](product) giá bao nhiêu
+    - [Xiaomi 13T](product) có giá bao nhiêu
+    - [OPPO Reno10 5G](product) giá thế nào
+    - [OPPO A78](product) bao nhiêu tiền
+    - [Vivo V27e](product) giá bao nhiêu
+    - [Vivo Y17s](product) có giá bao nhiêu
+
+- intent: ask_product
+  examples: |
+    - bạn có những sản phẩm gì
+    - có những loại điện thoại nào
+    - có những hãng điện thoại nào
+    - điện thoại gì
+    - sản phẩm gì
+    - có điện thoại nào
+    - bán điện thoại gì
+    - có iPhone không
+    - có Samsung không
+    - có Xiaomi không
+    - có OPPO không
+    - có Vivo không
+    - có iPhone 16 Pro Max không
+    - có Samsung S24 Ultra không
+    - có Xiaomi 14 Pro không
+    - có OPPO Find X7 Ultra không
+    - có Vivo X100 Pro không
+    - có iPhone 14 Pro không
+    - có iPhone 13 Pro không
+    - có Samsung Z Flip5 không
+    - có Samsung A54 không
+    - có Xiaomi Redmi Note 13 không
+    - có Xiaomi 13T không
+    - có OPPO Reno10 không
+    - có OPPO A78 không
+    - có Vivo V27e không
+    - có Vivo Y17s không
+
+- intent: ask_specs
+  examples: |
+    - [iPhone 16 Pro Max](product) có thông số gì
+    - thông số [iPhone 16 Pro Max](product)
+    - cấu hình [iPhone 16 Pro Max](product)
+    - [iPhone 16 Pro Max](product) có RAM bao nhiêu
+    - [iPhone 16 Pro Max](product) có bộ nhớ bao nhiêu
+    - [iPhone 16 Pro Max](product) có pin bao nhiêu
+    - [iPhone 16 Pro Max](product) có màn hình bao nhiêu inch
+    - [iPhone 16 Pro Max](product) có hệ điều hành gì
+    - [iPhone 16 Pro Max](product) có màu gì
+    - [Samsung Galaxy S24 Ultra](product) có thông số gì
+    - [Xiaomi 14 Pro](product) có cấu hình gì
+    - [OPPO Find X7 Ultra](product) có RAM bao nhiêu
+    - [Vivo X100 Pro](product) có pin bao nhiêu
+
+- intent: ask_discount
+  examples: |
+    - [iPhone 16 Pro Max](product) có giảm giá không
+    - [iPhone 16 Pro Max](product) có khuyến mãi gì
+    - [iPhone 16 Pro Max](product) có ưu đãi gì
+    - [iPhone 16 Pro Max](product) có giảm giá bao nhiêu
+    - [Samsung Galaxy S24 Ultra](product) có khuyến mãi không
+    - [Xiaomi 14 Pro](product) có ưu đãi gì
+    - [OPPO Find X7 Ultra](product) có giảm giá không
+    - [Vivo X100 Pro](product) có khuyến mãi gì
+    - [iPhone 13 Pro](product) có giảm giá bao nhiêu
+    - [Vivo V27e](product) có ưu đãi gì
+
+- intent: ask_stock
+  examples: |
+    - [iPhone 16 Pro Max](product) còn hàng không
+    - [iPhone 16 Pro Max](product) có sẵn không
+    - [iPhone 16 Pro Max](product) còn bao nhiêu cái
+    - [Samsung Galaxy S24 Ultra](product) còn hàng không
+    - [Xiaomi 14 Pro](product) có sẵn không
+    - [OPPO Find X7 Ultra](product) còn bao nhiêu cái
+    - [Vivo X100 Pro](product) còn hàng không
+    - [iPhone 14 Pro](product) có sẵn không
+    - [iPhone 13 Pro](product) còn bao nhiêu cái
+    - [Samsung Galaxy Z Flip5](product) còn hàng không
+
+- intent: ask_order
+  examples: |
+    - làm sao để đặt hàng
+    - cách đặt hàng
+    - đặt hàng như thế nào
+    - mua hàng như thế nào
+    - cách mua hàng
+    - đặt hàng online
+    - mua hàng online
+    - đặt [iPhone 16 Pro Max](product) như thế nào
+    - mua [Samsung Galaxy S24 Ultra](product) ở đâu
+    - cách đặt [Xiaomi 14 Pro](product)
+    - mua [OPPO Find X7 Ultra](product) online
+    - đặt [Vivo X100 Pro](product) trực tuyến
+
+- intent: ask_delivery
+  examples: |
+    - giao hàng bao lâu
+    - thời gian giao hàng
+    - bao lâu thì nhận được hàng
+    - ship hàng bao lâu
+    - giao hàng nhanh không
+    - có giao hàng nhanh không
+    - giao [iPhone 16 Pro Max](product) bao lâu
+    - ship [Samsung Galaxy S24 Ultra](product) mấy ngày
+    - giao [Xiaomi 14 Pro](product) nhanh không
+    - ship [OPPO Find X7 Ultra](product) bao lâu
+    - giao [Vivo X100 Pro](product) mấy ngày
+
+- intent: ask_return
+  examples: |
+    - chính sách đổi trả
+    - đổi trả như thế nào
+    - trả hàng như thế nào
+    - có được đổi trả không
+    - thời gian đổi trả
+    - điều kiện đổi trả
+    - đổi [iPhone 16 Pro Max](product) như thế nào
+    - trả [Samsung Galaxy S24 Ultra](product) ra sao
+    - đổi [Xiaomi 14 Pro](product) trong bao lâu
+    - trả [OPPO Find X7 Ultra](product) có được không
+    - đổi [Vivo X100 Pro](product) cần gì
+
+- intent: ask_warranty
+  examples: |
+    - bảo hành bao lâu
+    - có bảo hành không
+    - chính sách bảo hành
+    - điều kiện bảo hành
+    - [iPhone 16 Pro Max](product) bảo hành bao lâu
+    - [Samsung Galaxy S24 Ultra](product) có bảo hành không
+    - [Xiaomi 14 Pro](product) bảo hành thế nào
+    - [OPPO Find X7 Ultra](product) bảo hành ra sao
+    - [Vivo X100 Pro](product) bảo hành bao lâu
+
+- intent: ask_contact
+  examples: |
+    - liên hệ như thế nào
+    - số điện thoại liên hệ
+    - hotline là gì
+    - email liên hệ
+    - địa chỉ cửa hàng
+    - cửa hàng ở đâu
+    - giờ làm việc
+    - mấy giờ mở cửa
+    - mấy giờ đóng cửa
+    - có hỗ trợ online không
+    - có tư vấn online không
+    - có chat trực tuyến không 

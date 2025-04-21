@@ -43,7 +43,9 @@ class ShopController extends Controller
 
         // Lọc theo danh mục
         if ($request->has('category')) {
-            $query->where('category_id', $request->category);
+            $query->whereHas('category', function($q) use ($request) {
+                $q->where('slug', $request->category);
+            });
         }
 
         if ($request->has('search')) {
