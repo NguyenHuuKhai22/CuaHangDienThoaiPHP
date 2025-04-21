@@ -97,7 +97,3 @@ Nếu gặp lỗi khi chạy chatbot:
 3. Kiểm tra cấu hình trong các file .yml
 4. Thử train lại model
 
-## 8. Liên hệ hỗ trợ
-Nếu cần hỗ trợ thêm, vui lòng liên hệ:
-- Email: support@example.com
-- Hotline: 1900xxxx 
